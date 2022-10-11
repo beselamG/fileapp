@@ -1,5 +1,5 @@
-require('dotenv').config();
-const sql = require('mssql');
+require("dotenv").config();
+const sql = require("mssql");
 
 const sqlConfig = {
   user: process.env.SQL_USERNAME,
@@ -9,24 +9,23 @@ const sqlConfig = {
   pool: {
     max: 10,
     min: 0,
-    idleTimeoutMillis: 30000
+    idleTimeoutMillis: 30000,
   },
   options: {
     encrypt: true, // for azure
-    trustServerCertificate: false // change to true for local dev / self-signed certs
-  }
+    trustServerCertificate: false, // change to true for local dev / self-signed certs
+  },
 };
 
-sql.on('error', err => {
+sql.on("error", (err) => {
   // ... error handler
   throw err;
-})
+});
 
-async function dbTest () {
+async function dbTest() {
   let pool = await sql.connect(sqlConfig);
   try {
-    let result = await pool.request()
-      .query('select * from Files');
+    let result = await pool.request().query("select * from Files");
     return result.recordset;
   } catch (err) {
     // ... error checks
@@ -39,12 +38,15 @@ async function dbTest () {
 async function dbUpload(containerName, fileName, ownerId, blobUrl) {
   let pool = await sql.connect(sqlConfig);
   try {
-    const request = await pool.request()
-    .input('ContainerName', sql.NVarChar, containerName)
-    .input('FileName', sql.NVarChar, fileName)
-    .input('OwnerId', sql.NVarChar, ownerId)
-    .input('BlobUrl', sql.NVarChar, blobUrl)
-    .query('INSERT INTO Files (ContainerName, FileName, OwnerId, BlobUrl) VALUES (@ContainerName, @FileName, @OwnerId, @BlobUrl);');
+    const request = await pool
+      .request()
+      .input("ContainerName", sql.NVarChar, containerName)
+      .input("FileName", sql.NVarChar, fileName)
+      .input("OwnerId", sql.NVarChar, ownerId)
+      .input("BlobUrl", sql.NVarChar, blobUrl)
+      .query(
+        "INSERT INTO Files (ContainerName, FileName, OwnerId, BlobUrl) VALUES (@ContainerName, @FileName, @OwnerId, @BlobUrl);"
+      );
     // console.log(request);
   } catch (err) {
     // ... error checks
@@ -57,10 +59,13 @@ async function dbUpload(containerName, fileName, ownerId, blobUrl) {
 async function dbDelete(containerName, fileName) {
   let pool = await sql.connect(sqlConfig);
   try {
-    const request = await pool.request()
-    .input('ContainerName', sql.NVarChar, containerName)
-    .input('FileName', sql.NVarChar, fileName)
-    .query('DELETE FROM Files WHERE FileName = @FileName AND ContainerName = @ContainerName;');
+    const request = await pool
+      .request()
+      .input("ContainerName", sql.NVarChar, containerName)
+      .input("FileName", sql.NVarChar, fileName)
+      .query(
+        "DELETE FROM Files WHERE FileName = @FileName AND ContainerName = @ContainerName;"
+      );
   } catch (err) {
     // ... error checks
     throw err;
@@ -69,4 +74,4 @@ async function dbDelete(containerName, fileName) {
   }
 }
 
-module.exports = { dbTest, dbUpload, dbDelete};
+module.exports = { dbTest, dbUpload, dbDelete };

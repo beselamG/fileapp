@@ -11,8 +11,27 @@ export default function DisplayFiles({ uploaded }) {
     const [container, setContainers] = useState([]);
     const [blob, setBlob] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [searchResults, setSearchResults] = useState([]);
+
+
+
+    //Search bar input change
+    const searchChange = (event) => {
+        setSearchTerm(event.target.value);
+    }
+
+    useEffect(() => {
+        const results = blob.filter(b =>
+          b.FileName.toLowerCase().includes(searchTerm)
+        );
+        setSearchResults(results);
+      }, [searchTerm]);
+
+
+
     console.log("UPLOADED: " + uploaded);
-    //GET
+    //GET updated data from DB when upload successfull
     useEffect(() => {
         console.log('effect')
         getBlob()
@@ -34,7 +53,7 @@ export default function DisplayFiles({ uploaded }) {
                 console.log(blob);
                 setLoading(false);
             })
-        //otherwise no read permission
+            //otherwise no read permission
         } else {
             setBlob([]);
         }
@@ -51,10 +70,10 @@ export default function DisplayFiles({ uploaded }) {
                 containerName: ContainerName,
                 fileName: FileName
             })
-            .then(function (response) {
+                .then(function (response) {
                     console.log("delete Response: ", response.status);
                     //If succesfully deletes, delete item from UI
-                    if(response.status == 200){
+                    if (response.status == 200) {
                         console.log('Deleted');
                         setBlob(blob.filter(p => p.BlobURL !== BlobURL))
                     }
@@ -69,50 +88,56 @@ export default function DisplayFiles({ uploaded }) {
     if (hasBlobRead(instance)) {
         return (
             <div className="App" >
-                <h1>All Files</h1>
+                <h1>Search by file name</h1>
+                <input value={searchTerm}
+                    onChange={searchChange}
+                    className="searchBar" />
+                <h1>Files</h1>
                 <div className="tableContainer">
-                {loading ? (
-                    <div>...Data Loading.....</div>
-                ) : (
-                    
-                    <table className="fileTable">
-                        <tbody>
-                            <tr>
-                                <th>Container</th>
-                                <th>File name</th>
-                                <th>Owner Id</th>
-                                <th>Blob url</th>
-                                <th>delete</th>
-                            </tr>
-                            {blob.map(x =>
-                                <tr key={Math.random() * 9999}>
-                                    <td key={Math.random() * 9999}>
-                                        {x.ContainerName}
-                                    </td>
-                                    <td key={Math.random() * 9999}>
-                                        {x.FileName}
-                                    </td>
-                                    <td key={Math.random() * 9999}>
-                                        {x.OwnerId}
-                                    </td>
-                                    <td key={Math.random() * 9999}>
-                                        {x.BlobURL}
-                                    </td>
-                                    <td key={Math.random() * 9999}>
-                                        <button className="deleteBtn" onClick={event => handleDelete(event, x.BlobURL, x.FileName, x.ContainerName)}>
-                                            delete
-                                        </button>
-                                    </td>
+                    {/* If fetching DB data  */}
+                    {loading ? (
+                        <div>...Data Loading.....</div>
+                    ) : (
+                        <table className="fileTable">
+                            <tbody>
+                                <tr>
+                                    <th>Container</th>
+                                    <th>File name</th>
+                                    <th>Owner Id</th>
+                                    <th>Blob url</th>
+                                    <th>delete</th>
                                 </tr>
-                            )
-                            }
-                        </tbody>
-                    </table>)}
-                    </div>
+                                {/* Conditianal render here. If search is not null show matches, or "no matches" */}
+                                {searchResults.map(x =>
+                                    <tr key={Math.random() * 9999}>
+                                        <td key={Math.random() * 9999}>
+                                            {x.ContainerName}
+                                        </td>
+                                        <td key={Math.random() * 9999}>
+                                            {x.FileName}
+                                        </td>
+                                        <td key={Math.random() * 9999}>
+                                            {x.OwnerId}
+                                        </td>
+                                        <td key={Math.random() * 9999}>
+                                            {x.BlobURL}
+                                        </td>
+                                        <td key={Math.random() * 9999}>
+                                            <button className="deleteBtn" onClick={event => handleDelete(event, x.BlobURL, x.FileName, x.ContainerName)}>
+                                                delete
+                                            </button>
+                                        </td>
+                                    </tr>
+                                )
+                                }
+                            </tbody>
+                        </table>
+                    )}
+                </div>
                 <hr />
             </div>
         )
-    //otherwise no read permission
+        //otherwise no read permission
     } else {
         return (
             <div className="App" >

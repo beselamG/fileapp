@@ -79,7 +79,7 @@ export default function Upload({ localAccountId }) {
         return (
             <>
                 <div  style={{ paddingBottom: 100 }}>
-                    <form className="uploadForm" onSubmit={handleSubmit}>
+                    <form className="uploadForm" onSubmit={handleSubmit} data-testid="uploadForm">
                         <h1>File Upload</h1>
                         <label style={{ paddingBottom: 10 }}>Choose a Conainer</label>
                         <select

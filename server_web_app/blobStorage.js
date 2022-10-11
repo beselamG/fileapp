@@ -1,51 +1,9 @@
 const { DefaultAzureCredential } = require("@azure/identity");
-const az_identity = require("@azure/identity");
-const az_keyvault = require("@azure/keyvault-secrets");
-
-const {
-  BlobServiceClient,
-  StorageSharedKeyCredential,
-} = require("@azure/storage-blob");
-const { dbTest, dbUpload, dbDelete } = require("./dbQuery.js");
-const credentials = new az_identity.DefaultAzureCredential();
-const client = new az_keyvault.SecretClient(
-  "https://teamaz-key-vault.vault.azure.net/",
-  credentials
-);
-var blobServiceClientt = null;
-
-client
-  .getSecret("SHARED-KEY")
-  .then((res) => {
-    console.log("resssss ", res, res.name, res.body);
-  })
-  .catch((e) => {
-    console.log(e);
-  });
-
-require("dotenv").config();
+const { getBlobService } = require("./keyVault");
 
 
-const getBlobService = async function () {
 
-  if (blobServiceClientt == null) {
-    const storageAccount = (await client.getSecret("STOR-ACCOUNT")).value;
-    const accountKey = (await client.getSecret("SHARED-KEY")).value;
-    const sharedKeyCredential = new StorageSharedKeyCredential(
-      storageAccount,
-      accountKey
-    );
 
-    blobServiceClientt = new BlobServiceClient(
-      `https://${account}.blob.core.windows.net`,
-      sharedKeyCredential
-    );
-    return blobServiceClientt;
-  } else {
-    console.log("called but we have");
-    return blobServiceClientt;
-  }
-};
 
 const getContainerList = async function () {
   const bloService = await getBlobService();

@@ -1,42 +1,7 @@
 require("dotenv").config();
 const sql = require("mssql");
-const az_identity = require("@azure/identity");
-const az_keyvault = require("@azure/keyvault-secrets");
-var sqlConfig = null;
-const credentials = new az_identity.DefaultAzureCredential();
-const client = new az_keyvault.SecretClient(
-  "https://teamaz-key-vault.vault.azure.net/",
-  credentials
-);
+const { getDbConfig } = require("./keyVault");
 
-
-const getConfig = async function () {
-  if (sqlConfig == null) {
-    const dbUser = (await client.getSecret("SQL-USERNAME")).value;
-    const dbPassword = (await client.getSecret("SQL-PASSWORD")).value;
-    const db = (await client.getSecret("SQL-DATABASE")).value;
-    const server = (await client.getSecret("SQL-SERVER")).value;
-
-    const sqlConfig = {
-      user: dbUser,
-      password: dbPassword,
-      database: db,
-      server: server,
-      pool: {
-        max: 10,
-        min: 0,
-        idleTimeoutMillis: 30000,
-      },
-      options: {
-        encrypt: true, // for azure
-        trustServerCertificate: false, // change to true for local dev / self-signed certs
-      },
-    };
-    return sqlConfig;
-  } else {
-    return sqlConfig;
-  }
-};
 
 sql.on("error", (err) => {
   // ... error handler
@@ -45,7 +10,7 @@ sql.on("error", (err) => {
 
 async function dbTest() {
   try {
-    const sqlConfig = await getConfig();
+    const sqlConfig = await getDbConfig();
     let pool = await sql.connect(sqlConfig);
     let result = await pool.request().query("select * from Files");
     return result.recordset;
@@ -59,7 +24,7 @@ async function dbTest() {
 
 async function dbUpload(containerName, fileName, ownerId, blobUrl) {
   try {
-    const sqlConfig = await getConfig();
+    const sqlConfig = await getDbConfig();
     let pool = await sql.connect(sqlConfig);
     const request = await pool
       .request()
@@ -81,7 +46,7 @@ async function dbUpload(containerName, fileName, ownerId, blobUrl) {
 
 async function dbDelete(containerName, fileName) {
   try {
-    const sqlConfig = await getConfig();
+    const sqlConfig = await getDbConfig();
     let pool = await sql.connect(sqlConfig);
     const request = await pool
       .request()

@@ -12,31 +12,38 @@
   font-size: small;
 }
 
-.fileTable td, .fileTable th {
+.fileTable td,
+.fileTable th {
   border: 1px solid #ddd;
   padding: 8px;
 }
 
-.fileTable tr:nth-child(even){background-color: #f2f2f2;}
+.fileTable tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
 
-.fileTable tr:hover {background-color: #ddd;}
+.fileTable tr:hover {
+  background-color: #ddd;
+}
 
 .fileTable th {
   padding-top: 12px;
   padding-bottom: 12px;
   text-align: left;
-  background-color: #04AA6D;
+  background-color: #04aa6d;
   color: white;
 }
-.deleteBtn{
+.deleteBtn {
   color: white;
   background-color: #f44336;
 }
-.tableContainer{
-  overflow-x:auto;
+.tableContainer {
+  overflow-x: auto;
 }
-.uploadForm{
+.uploadForm {
   display: flex;
   flex-direction: column;
-
+}
+.searchBar{
+  width: 50%;
 }

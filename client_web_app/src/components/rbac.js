@@ -1,5 +1,5 @@
-const blobWrite = "Blob.Write";
-const blobRead = "Blob.Read";
+const blobWrite = 'Blob.Write';
+const blobRead = 'Blob.Read';
 
 function hasBlobWrite(instance) {
   return hasPermission(instance, blobWrite);
@@ -16,7 +16,7 @@ function hasPermission(instance, permission) {
     console.log(roles);
     return roles.includes(permission);
   } catch {
-    console.log("Checking permission fails!");
+    console.log('Checking permission fails!');
     return false;
   }
 }

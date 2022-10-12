@@ -1,7 +1,7 @@
-import React from "react";
-import { useMsal } from "@azure/msal-react";
-import { loginRequest } from "../authConfig";
-import Button from "react-bootstrap/Button";
+import React from 'react';
+import { useMsal } from '@azure/msal-react';
+import { loginRequest } from '../authConfig';
+import Button from 'react-bootstrap/Button';
 
 function handleLogin(instance) {
   instance.loginRedirect(loginRequest).catch((e) => {

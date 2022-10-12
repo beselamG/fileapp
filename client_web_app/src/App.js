@@ -1,18 +1,18 @@
 // client/src/App.js
-import React from "react";
-import "./App.css";
-import { useState, useEffect } from "react";
-import axios from "axios";
-import Upload from "./components/Upload";
-import blobs from "./components/blobs";
-import { PageLayout } from "./components/PageLayout";
+import React from 'react';
+import './App.css';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+import Upload from './components/Upload';
+import blobs from './components/blobs';
+import { PageLayout } from './components/PageLayout';
 import {
   AuthenticatedTemplate,
   UnauthenticatedTemplate,
   useMsal,
-} from "@azure/msal-react";
-import { loginRequest } from "./authConfig";
-import Button from "react-bootstrap/Button";
+} from '@azure/msal-react';
+import { loginRequest } from './authConfig';
+import Button from 'react-bootstrap/Button';
 //import DisplayFiles from "./components/DisplayFiles";
 
 //Profile content component only accessable after Auth

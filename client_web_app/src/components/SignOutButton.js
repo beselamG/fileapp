@@ -1,6 +1,6 @@
-import React from "react";
-import { useMsal } from "@azure/msal-react";
-import Button from "react-bootstrap/Button";
+import React from 'react';
+import { useMsal } from '@azure/msal-react';
+import Button from 'react-bootstrap/Button';
 
 function handleLogout(instance) {
   instance.logoutRedirect().catch((e) => {

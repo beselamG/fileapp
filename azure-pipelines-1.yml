@@ -20,6 +20,11 @@ steps:
     npm install
     cd ..
   displayName: 'npm install'
+- script: |
+    cd $(path)
+    npm run test
+    cd ..
+  displayName: 'npm run test'
 - task: ArchiveFiles@2
   inputs:
     rootFolderOrFile: '$(path)'

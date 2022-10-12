@@ -10,5 +10,5 @@ describe('GET /dbTest', () => {
       .get('/dbTest')
       .expect(200)
       .expect('Content-Type', /json/);
-  });
+  }, 60000);
 });

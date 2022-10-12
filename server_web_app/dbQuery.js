@@ -1,6 +1,6 @@
-require("dotenv").config();
-const sql = require("mssql");
-const { getDbConfig } = require("./keyVault");
+require('dotenv').config();
+const sql = require('mssql');
+const { getDbConfig } = require('./keyVault');
 
 sql.on('error', (err) => {
   // ... error handler
@@ -8,7 +8,7 @@ sql.on('error', (err) => {
 });
 
 async function dbTest(testConfig) {
-  const prodConfig = await getDbConfig()
+  const prodConfig = await getDbConfig();
   const config = testConfig || prodConfig;
 
   const pool = await sql.connect(config);
@@ -24,7 +24,7 @@ async function dbTest(testConfig) {
 }
 
 async function dbUpload(containerName, fileName, ownerId, blobUrl, testConfig) {
-  const prodConfig = await getDbConfig()
+  const prodConfig = await getDbConfig();
   const config = testConfig || prodConfig;
 
   const pool = await sql.connect(config);
@@ -48,7 +48,7 @@ async function dbUpload(containerName, fileName, ownerId, blobUrl, testConfig) {
 }
 
 async function dbDelete(containerName, fileName) {
-  const prodConfig = await getDbConfig()
+  const prodConfig = await getDbConfig();
   const config = testConfig || prodConfig;
 
   const pool = await sql.connect(config);

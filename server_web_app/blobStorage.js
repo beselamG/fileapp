@@ -1,12 +1,9 @@
-const { DefaultAzureCredential } = require("@azure/identity");
-const { getBlobService } = require("./keyVault");
+const { getBlobService } = require('./keyVault');
 
 
 
 const getContainerList = async function () {
   const bloService = await getBlobService();
-
-  let i = 1;
   let containers = bloService.listContainers();
   let cont = [];
   for await (const container of containers) {
@@ -16,7 +13,7 @@ const getContainerList = async function () {
     cont.push({ contName: container.name, blob: blob });
     //console.log(`Container ${i++}: ${container.name}`);
   }
-  console.log("CONTAINER ARRAY: ", cont);
+  console.log('CONTAINER ARRAY: ', cont);
   //return object
   return cont;
 };
@@ -24,7 +21,7 @@ const getContainerList = async function () {
 const getBlobList = async function (containerName) {
   const blobService = await getBlobService();
 
-  console.log("\nListing blobs...");
+  console.log('\nListing blobs...');
 
   const containerClient = blobService.getContainerClient(containerName);
   //blob properties
@@ -34,7 +31,7 @@ const getBlobList = async function (containerName) {
     // Get Blob Client from name, to get the URL
     const tempBlockBlobClient = containerClient.getBlockBlobClient(blob.name);
     //put to obj
-    let blobObj = { name: "", url: "" };
+    let blobObj = { name: '', url: '' };
     blobObj.name = blob.name;
     blobObj.url = tempBlockBlobClient.url;
     blobArr.push(blobObj);
@@ -53,7 +50,7 @@ const uploadBlob = async function (containerName, blobFile, loacalAccountId) {
 
     const content = blobFile.buffer;
     const blockBlobClient = containerClient.getBlockBlobClient(blobName);
-    const uploadBlobResponse = await blockBlobClient.upload(
+    await blockBlobClient.upload(
       content,
       content.length
     );
@@ -77,13 +74,13 @@ const uploadBlob = async function (containerName, blobFile, loacalAccountId) {
 const deleteBlob = async function (containerName, blobName) {
   try {
     const options = {
-      deleteSnapshots: "include", // or 'only'
+      deleteSnapshots: 'include', // or 'only'
     };
     const blobService = await getBlobService();
     const containerClient = blobService.getContainerClient(containerName);
     const blockBlobClient = containerClient.getBlockBlobClient(blobName);
 
-    const deleteBlobResponse = await blockBlobClient.delete(options);
+    await blockBlobClient.delete(options);
 
     //delete database record
     dbDelete(containerName, blobName)

@@ -1,22 +1,22 @@
-const request = require("supertest");
-const app = require("../app.js");
+const request = require('supertest');
+const app = require('../app.js');
 const api = request(app);
 
-const blobStorage = require("../blobStorage.js");
+const blobStorage = require('../blobStorage.js');
 
 beforeEach(() => {
-  const data = [{ contName: "name", blob: [] }];
+  const data = [{ contName: 'name', blob: [] }];
   mockDateNow = jest
-    .spyOn(blobStorage, "getContainerList")
+    .spyOn(blobStorage, 'getContainerList')
     .mockImplementation(() => data);
 });
 
-describe("GET /getContainer tes", () => {
-  test("should return the json", async () => {
+describe('GET /getContainer tes', () => {
+  test('should return the json', async () => {
     await api
-      .get("/getContainer")
+      .get('/getContainer')
       .expect(200)
-      .expect("Content-Type", /json/)
+      .expect('Content-Type', /json/);
       
   });
 });

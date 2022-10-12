@@ -44,3 +44,6 @@
   display: flex;
   flex-direction: column;
 }
+.searchBar{
+  width: 50%;
+}

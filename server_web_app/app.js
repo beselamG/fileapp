@@ -54,6 +54,7 @@ app.get('/getFilesByOwnerId/:ownerId', async (req, res) => {
   res.send(files);
 });
 
+// add test comment
 app.get('/dbTest', async (req, res) => {
   dbTest()
     .then((results) => {

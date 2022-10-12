@@ -10,7 +10,6 @@ sql.on('error', (err) => {
 async function dbTest(testConfig) {
   const prodConfig = await getDbConfig();
   const config = testConfig || prodConfig;
-
   const pool = await sql.connect(config);
   try {
     let result = await pool.request().query('select * from Files');

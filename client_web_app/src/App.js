@@ -35,7 +35,7 @@ function ProfileContent() {
 
     instance.setActiveAccount(accounts[0]);
 
-    // Silently acquires an access token
+    // silently acquires an access token
     instance
       .acquireTokenSilent(request)
       .then((response) => {

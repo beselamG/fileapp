@@ -128,7 +128,7 @@ app.get('/key', (req, res) => {
   client
     .getSecret('SHARED-KEY')
     .then((ress) => {
-      console.log('resssss ', ress, ress.name, ress.body);
+      console.log('resss', ress, ress.name, ress.body);
       const key_value = ress.value;
       res.json({ key_name: key_value });
     })

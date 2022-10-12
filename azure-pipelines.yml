@@ -6,9 +6,6 @@ trigger:
   tags:
     include:
     - 'client'
-  branches:
-    include:
-    - master
 variables:
   path: 'client_web_app'
   buildPath: 'client_web_app/build'

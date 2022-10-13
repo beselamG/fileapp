@@ -28,12 +28,12 @@ steps:
 - task: ArchiveFiles@2
   inputs:
     rootFolderOrFile: '$(zipPath)'
-    includeRootFolder: true
+    includeRootFolder: false
     archiveType: 'zip'
     archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
     replaceExistingArchive: true
 - task: PublishBuildArtifacts@1
   inputs:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-    ArtifactName: 'dropserver'
+    ArtifactName: 'dropserver2'
     publishLocation: 'Container'

@@ -24,7 +24,10 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 
-app.get('/getFilesByOwnerId/:ownerId', async (req, res) => {
+
+/* 
+app.get("/getFilesByOwnerId/:ownerId", async (req, res) => {
+
   const files = [];
 
   const ownerId = req.params.ownerId;
@@ -52,7 +55,7 @@ app.get('/getFilesByOwnerId/:ownerId', async (req, res) => {
   });
 
   res.send(files);
-});
+}); */
 
 // add test comment
 app.get('/dbTest', async (req, res) => {

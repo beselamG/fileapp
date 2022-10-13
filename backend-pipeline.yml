@@ -8,7 +8,7 @@ trigger:
     - server_web_app/*
 variables:
   path: 'server_web_app'
-  zipPath: 'server_web_app/*'
+  zipPath: 'server_web_app/'
 pool:
   vmImage: windows-latest
 steps:

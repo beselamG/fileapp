@@ -6,6 +6,9 @@ trigger:
   paths:
     include:
     - server_web_app/*
+  branches:
+    include:
+    - master
 variables:
   path: 'server_web_app'
   zipPath: 'server_web_app/'

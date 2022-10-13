@@ -1,23 +1,10 @@
-const { DefaultAzureCredential } = require("@azure/identity");
-const {
-  BlobServiceClient,
-  StorageSharedKeyCredential,
-} = require("@azure/storage-blob");
-const { dbTest, dbUpload, dbDelete } = require("./dbQuery.js");
+const { getBlobService } = require('./keyVault');
 
-require("dotenv").config();
-const account = process.env.STOR_ACCOUNT;
-const accountKey = process.env.SHARED_KEY;
-const sharedKeyCredential = new StorageSharedKeyCredential(account, accountKey);
 
-const blobServiceClient = new BlobServiceClient(
-  `https://${account}.blob.core.windows.net`,
-  sharedKeyCredential
-);
 
 const getContainerList = async function () {
-  let i = 1;
-  let containers = blobServiceClient.listContainers();
+  const bloService = await getBlobService();
+  let containers = bloService.listContainers();
   let cont = [];
   for await (const container of containers) {
     //get blobs in this cont
@@ -26,15 +13,17 @@ const getContainerList = async function () {
     cont.push({ contName: container.name, blob: blob });
     //console.log(`Container ${i++}: ${container.name}`);
   }
-  console.log("CONTAINER ARRAY: ", cont);
+  console.log('CONTAINER ARRAY: ', cont);
   //return object
   return cont;
 };
 
 const getBlobList = async function (containerName) {
-  console.log("\nListing blobs...");
+  const blobService = await getBlobService();
 
-  const containerClient = blobServiceClient.getContainerClient(containerName);
+  console.log('\nListing blobs...');
+
+  const containerClient = blobService.getContainerClient(containerName);
   //blob properties
   blobArr = [];
   // List the blob(s) in the container.
@@ -42,7 +31,7 @@ const getBlobList = async function (containerName) {
     // Get Blob Client from name, to get the URL
     const tempBlockBlobClient = containerClient.getBlockBlobClient(blob.name);
     //put to obj
-    let blobObj = { name: "", url: "" };
+    let blobObj = { name: '', url: '' };
     blobObj.name = blob.name;
     blobObj.url = tempBlockBlobClient.url;
     blobArr.push(blobObj);
@@ -55,12 +44,13 @@ const getBlobList = async function (containerName) {
 
 const uploadBlob = async function (containerName, blobFile, loacalAccountId) {
   try {
-    const containerClient = blobServiceClient.getContainerClient(containerName);
+    const blobService = await getBlobService();
+    const containerClient = blobService.getContainerClient(containerName);
     const blobName = blobFile.originalname;
 
     const content = blobFile.buffer;
     const blockBlobClient = containerClient.getBlockBlobClient(blobName);
-    const uploadBlobResponse = await blockBlobClient.upload(
+    await blockBlobClient.upload(
       content,
       content.length
     );
@@ -84,13 +74,13 @@ const uploadBlob = async function (containerName, blobFile, loacalAccountId) {
 const deleteBlob = async function (containerName, blobName) {
   try {
     const options = {
-      deleteSnapshots: "include", // or 'only'
+      deleteSnapshots: 'include', // or 'only'
     };
-
-    const containerClient = blobServiceClient.getContainerClient(containerName);
+    const blobService = await getBlobService();
+    const containerClient = blobService.getContainerClient(containerName);
     const blockBlobClient = containerClient.getBlockBlobClient(blobName);
 
-    const deleteBlobResponse = await blockBlobClient.delete(options);
+    await blockBlobClient.delete(options);
 
     //delete database record
     dbDelete(containerName, blobName)

@@ -1,21 +1,6 @@
 require('dotenv').config();
 const sql = require('mssql');
-
-const prodConfig = {
-  user: process.env.SQL_USERNAME,
-  password: process.env.SQL_PASSWORD,
-  database: process.env.SQL_DATABASE,
-  server: process.env.SQL_SERVER,
-  pool: {
-    max: 10,
-    min: 0,
-    idleTimeoutMillis: 30000,
-  },
-  options: {
-    encrypt: true, // for azure
-    trustServerCertificate: false, // change to true for local dev / self-signed certs
-  },
-};
+const { getDbConfig } = require('./keyVault');
 
 sql.on('error', (err) => {
   // ... error handler
@@ -23,8 +8,8 @@ sql.on('error', (err) => {
 });
 
 async function dbTest(testConfig) {
+  const prodConfig = await getDbConfig();
   const config = testConfig || prodConfig;
-
   const pool = await sql.connect(config);
   try {
     let result = await pool.request().query('select * from Files');
@@ -38,6 +23,7 @@ async function dbTest(testConfig) {
 }
 
 async function dbUpload(containerName, fileName, ownerId, blobUrl, testConfig) {
+  const prodConfig = await getDbConfig();
   const config = testConfig || prodConfig;
 
   const pool = await sql.connect(config);
@@ -61,6 +47,7 @@ async function dbUpload(containerName, fileName, ownerId, blobUrl, testConfig) {
 }
 
 async function dbDelete(containerName, fileName) {
+  const prodConfig = await getDbConfig();
   const config = testConfig || prodConfig;
 
   const pool = await sql.connect(config);

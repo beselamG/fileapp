@@ -23,7 +23,6 @@ steps:
 - script: |
     cd $(path)
     npm run test
-    cd ..
   displayName: 'npm run test'
 - task: ArchiveFiles@2
   inputs:

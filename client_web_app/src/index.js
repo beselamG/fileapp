@@ -4,7 +4,7 @@ import './index.css';
 import App from './App';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { PublicClientApplication } from '@azure/msal-browser';
-import { msalConfig } from './authConfig';
+
 
 const msalInstance = new PublicClientApplication(msalConfig);
 

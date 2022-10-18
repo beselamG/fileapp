@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { useState, useEffect } from 'react';
 import { useMsal } from '@azure/msal-react';
 import axios from 'axios';
 import blobs from './blobs';
 import { hasBlobWrite, hasBlobRead } from './rbac';
+import { AppConfigContext } from '../AppConfigContext';
 
-const baseUrl = process.env.REACT_APP_API_URL;
 
 export default function DisplayFiles({ uploaded }) {
   const [container, setContainers] = useState([]);
@@ -13,6 +13,7 @@ export default function DisplayFiles({ uploaded }) {
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState([]);
+  const [apiUrl]= useContext(AppConfigContext);
 
 
 
@@ -30,7 +31,7 @@ export default function DisplayFiles({ uploaded }) {
 
 
 
-  console.log('UPLOADED: ' + uploaded);
+  
   //GET updated data from DB when upload successfull
   useEffect(() => {
     console.log('effect');
@@ -66,7 +67,7 @@ export default function DisplayFiles({ uploaded }) {
     //Ask if sure
     if (window.confirm(`Are you sure you want to delete ${FileName}`)) {
       //setBlob(blob.filter(p => p.BlobURL !== BlobURL))
-      axios.post(`${baseUrl}/dbDelele`, {
+      axios.post(`${apiUrl}/dbDelele`, {
         containerName: ContainerName,
         fileName: FileName
       })

@@ -1,19 +1,21 @@
-import React from 'react';
+import React,{useContext} from 'react';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import DisplayFiles from './DisplayFiles';
 import blobs from './blobs';
 import { useMsal } from '@azure/msal-react';
 import { hasBlobWrite, hasBlobRead } from './rbac';
+import { AppConfigContext } from '../AppConfigContext';
 
 //Change proxy too 
-const baseUrl = process.env.REACT_APP_API_URL;
+
 
 export default function Upload({ localAccountId }) {
   const [file, setFile] = useState();
   const [uploaded, setUploaded] = useState(false);
   const [containers, setContainer] = useState([]);
   const [selectedContainer, setSelectedContainer] = useState();
+  const [apiUrl]= useContext(AppConfigContext);
 
   // retrieve account roles
   const { instance } = useMsal();
@@ -51,7 +53,7 @@ export default function Upload({ localAccountId }) {
   async function handleSubmit(event) {
     event.preventDefault();
     setUploaded(false);
-    const url = `${baseUrl}/upload`;
+    const url = `${apiUrl}/upload`;
     console.log(file);
     let formData = new FormData();
     formData.append('localAccountId', localAccountId);
@@ -104,7 +106,6 @@ export default function Upload({ localAccountId }) {
     return (
       <>
         <div className="App" >
-          <h1>You have no permission to write files!</h1>
         </div>
         <DisplayFiles uploaded={uploaded} />
       </>

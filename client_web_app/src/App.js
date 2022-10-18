@@ -2,20 +2,18 @@
 import React from 'react';
 import './App.css';
 import { useState, useEffect } from 'react';
-import axios from 'axios';
 import Upload from './components/Upload';
-import blobs from './components/blobs';
 import { PageLayout } from './components/PageLayout';
 import {
   AuthenticatedTemplate,
   UnauthenticatedTemplate,
   useMsal,
 } from '@azure/msal-react';
-import { loginRequest } from './authConfig';
-import Button from 'react-bootstrap/Button';
+import {  getMsalConfig, loginRequest } from './authConfig';
 import { AppConfigContext } from './AppConfigContext';
 import { AppConfigurationClient } from '@azure/app-configuration';
-import { DefaultAzureCredential } from '@azure/identity';
+import { PublicClientApplication } from '@azure/msal-browser';
+import { MsalProvider } from '@azure/msal-react';
 
 //provide the app configuration client
 const getAppConfigClient = () => {
@@ -39,8 +37,6 @@ function ProfileContent() {
   useEffect(() => {
     RequestAccessToken();
   }, []);
-
-
 
   function RequestAccessToken() {
     const request = {
@@ -77,9 +73,13 @@ function ProfileContent() {
 function App() {
   const [apiUrl, setApiUrl] = useState(null);
   const [redirectUrl, setRedirectApiUrl] = useState(null);
+  const msalInstance = new PublicClientApplication(getMsalConfig(redirectUrl));
+  
+
 
   useEffect(() => {
     getAppConfig();
+
   }, []);
 
   const getAppConfig = async () => {
@@ -95,30 +95,30 @@ function App() {
         setApiUrl(api_url.value);
         setRedirectApiUrl(redirect_url.value);
 
-        console.log('valuess',apiUrl, redirectUrl);
+        console.log('valuess', apiUrl, redirectUrl);
       }
     } catch (error) {
       console.log(error);
     }
   };
 
+  if (apiUrl == null ||  redirectUrl == null) {
+    return <p>Service not available</p>;
+  }
+
   return (
-    <PageLayout>
-     
-      {apiUrl != null && redirectUrl != null ? 
-     
-        <AppConfigContext.Provider value={[apiUrl,redirectUrl]}>
+    <AppConfigContext.Provider value={[apiUrl, redirectUrl]}>
+      <MsalProvider instance={msalInstance}>
+        <PageLayout>
           <AuthenticatedTemplate>
             <ProfileContent />
           </AuthenticatedTemplate>
           <UnauthenticatedTemplate>
             <p>You are not signed in! Please sign in.</p>
           </UnauthenticatedTemplate>
-        </AppConfigContext.Provider> 
-        
-        : <p>Service  not  available</p>}
-    
-    </PageLayout>
+        </PageLayout>
+      </MsalProvider>
+    </AppConfigContext.Provider>
   );
 }
 export default App;

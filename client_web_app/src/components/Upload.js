@@ -35,12 +35,14 @@ export default function Upload({ localAccountId }) {
 
     // if has write permission
     if (hasBlobWrite(instance)) {
-      console.log('effect');
+      
+        
       blobs.getContainer().then(conts => {
-        console.log(conts);
+     
         setContainer(conts);
         setSelectedContainer(conts[0].contName);
-        console.log('CONTAINERS:', containers);
+     
+        
 
       });
       //otherwise no write permission

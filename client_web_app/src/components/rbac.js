@@ -11,9 +11,9 @@ function hasBlobRead(instance) {
 
 function hasPermission(instance, permission) {
   try {
-    console.log(instance.getActiveAccount());
+   
     const roles = instance.getActiveAccount().idTokenClaims.roles;
-    console.log(roles);
+   
     return roles.includes(permission);
   } catch {
     console.log('Checking permission fails!');

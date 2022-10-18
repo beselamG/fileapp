@@ -9,7 +9,7 @@ import { SignOutButton } from './SignOutButton';
  */
 export const PageLayout = (props) => {
   const isAuthenticated = useIsAuthenticated();
-  console.log('PageLayot props:', props);
+ 
 
   return (
     <>

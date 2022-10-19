@@ -46,7 +46,7 @@ async function dbUpload(containerName, fileName, ownerId, blobUrl, testConfig) {
   }
 }
 
-async function dbDelete(containerName, fileName) {
+async function dbDelete(containerName, fileName, testConfig) {
   const prodConfig = await getDbConfig();
   const config = testConfig || prodConfig;
 
@@ -60,6 +60,7 @@ async function dbDelete(containerName, fileName) {
         'DELETE FROM Files WHERE FileName = @FileName AND ContainerName = @ContainerName;'
       );
   } catch (err) {
+    console.log(err);
     // ... error checks
     throw err;
   } finally {

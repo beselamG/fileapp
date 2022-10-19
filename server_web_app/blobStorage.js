@@ -1,4 +1,5 @@
 const { getBlobService } = require('./keyVault');
+const { dbTest, dbUpload, dbDelete } = require('./dbQuery.js');
 
 
 

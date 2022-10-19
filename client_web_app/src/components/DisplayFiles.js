@@ -78,13 +78,22 @@ export default function DisplayFiles({ uploaded }) {
           //If succesfully deletes, delete item from UI
           if (response.status == 200) {
             console.log('Deleted');
+            setSearchResults(blob.filter(p => p.BlobURL !== BlobURL));
             setBlob(blob.filter(p => p.BlobURL !== BlobURL));
+            setSearchTerm('');
           }
         });
     } else {
       // Do nothing if alert window select close!
       console.log('Thing was not deleted');
     }
+  };
+  //Download file
+  const handleDownload = (event, BlobURL, FileName) => {
+    saveAs(
+      BlobURL,
+      FileName
+    );
   };
 
   // if has read permission
@@ -123,7 +132,7 @@ export default function DisplayFiles({ uploaded }) {
                       {x.OwnerId}
                     </td>
                     <td key={Math.random() * 9999}>
-                      <button className="downloadBtn" onClick={event => handleDownload(event, x.BlobURL, x.FileName, x.ContainerName)}>
+                      <button className="downloadBtn" onClick={event => handleDownload(event, x.BlobURL, x.FileName)}>
                         download
                       </button>
                     </td>

@@ -8,7 +8,7 @@ import { AppConfigContext } from '../AppConfigContext';
 import { saveAs } from 'file-saver';
 
 
-export default function DisplayFiles({ uploaded }) {
+export default function DisplayFiles({ uploaded, localAccountId }) {
   const [container, setContainers] = useState([]);
   const [blob, setBlob] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -31,13 +31,20 @@ export default function DisplayFiles({ uploaded }) {
   }, [searchTerm]);
 
 
-
-
   //GET updated data from DB when upload successfull
+  //Get after sign in trigger with localAccountId
   useEffect(() => {
     console.log('effect');
     getBlob();
+    console.log(localAccountId);
+  }, [localAccountId]);
+  //get after page reload
+  useEffect(() => {
+    console.log('effect');
+    getBlob();
+    console.log(localAccountId);
   }, []);
+  //get after new file upload
   useEffect(() => {
     getBlob();
   }, [uploaded]);

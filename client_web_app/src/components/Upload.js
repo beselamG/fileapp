@@ -30,27 +30,22 @@ export default function Upload({ localAccountId }) {
     setSelectedContainer(event.target.value);
                 
   };
-  //Get all containers here 
-  useEffect(() => {
+  
 
+  //Get all containers here when signed in 
+  useEffect(() => {
     // if has write permission
     if (hasBlobWrite(instance)) {
-      
-        
       blobs.getContainer(apiUrl).then(conts => {
-     
         setContainer(conts);
         setSelectedContainer(conts[0].contName);
      
-        
-
       });
       //otherwise no write permission
     } else {
       setContainer([]);
     }
-  }, []);
-
+  }, [localAccountId]);
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -100,7 +95,7 @@ export default function Upload({ localAccountId }) {
             <button type="submit">Upload</button>
           </form>
         </div>
-        <DisplayFiles uploaded={uploaded} />
+        <DisplayFiles uploaded={uploaded} localAccountId={localAccountId}/>
       </>
     );
     // otherwise no write permission

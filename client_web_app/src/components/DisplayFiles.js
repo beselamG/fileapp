@@ -5,6 +5,7 @@ import axios from 'axios';
 import blobs from './blobs';
 import { hasBlobWrite, hasBlobRead } from './rbac';
 import { AppConfigContext } from '../AppConfigContext';
+import { saveAs } from 'file-saver';
 
 
 export default function DisplayFiles({ uploaded }) {
@@ -13,7 +14,7 @@ export default function DisplayFiles({ uploaded }) {
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState([]);
-  const [apiUrl]= useContext(AppConfigContext);
+  const [apiUrl] = useContext(AppConfigContext);
 
 
 
@@ -31,7 +32,7 @@ export default function DisplayFiles({ uploaded }) {
 
 
 
-  
+
   //GET updated data from DB when upload successfull
   useEffect(() => {
     console.log('effect');
@@ -48,9 +49,10 @@ export default function DisplayFiles({ uploaded }) {
     // if has read permission
     if (hasBlobRead(instance)) {
       setLoading(true);
-      blobs.getSQL().then(initialBlobs => {
+      blobs.getSQL(apiUrl).then(initialBlobs => {
         console.log(initialBlobs);
         setBlob(initialBlobs);
+        setSearchResults(initialBlobs);
         console.log(blob);
         setLoading(false);
       });
@@ -104,8 +106,8 @@ export default function DisplayFiles({ uploaded }) {
                 <tr>
                   <th>Container</th>
                   <th>File name</th>
-                  <th>Owner Id</th>
-                  <th>Blob url</th>
+                  <th>Uploaded by Id</th>
+                  <th>Download File</th>
                   <th>delete</th>
                 </tr>
                 {/* Conditianal render here. If search is not null show matches, or "no matches" */}
@@ -121,11 +123,13 @@ export default function DisplayFiles({ uploaded }) {
                       {x.OwnerId}
                     </td>
                     <td key={Math.random() * 9999}>
-                      {x.BlobURL}
+                      <button className="downloadBtn" onClick={event => handleDownload(event, x.BlobURL, x.FileName, x.ContainerName)}>
+                        download
+                      </button>
                     </td>
                     <td key={Math.random() * 9999}>
                       <button className="deleteBtn" onClick={event => handleDelete(event, x.BlobURL, x.FileName, x.ContainerName)}>
-                                                delete
+                        delete
                       </button>
                     </td>
                   </tr>

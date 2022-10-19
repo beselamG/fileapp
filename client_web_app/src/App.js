@@ -75,6 +75,7 @@ function App() {
   const [redirectUrl, setRedirectApiUrl] = useState(null);
   const msalInstance = new PublicClientApplication(getMsalConfig(redirectUrl));
   
+  
 
 
   useEffect(() => {
@@ -83,23 +84,46 @@ function App() {
   }, []);
 
   const getAppConfig = async () => {
-    try {
-      const client = getAppConfigClient();
-      const api_url = await client.getConfigurationSetting({
-        key: 'REACT_APP_API_URL',
-      });
-      const redirect_url = await client.getConfigurationSetting({
-        key: 'REACT_APP_REDERICT_URI',
-      });
-      if (api_url.value != undefined && redirect_url.value != undefined) {
-        setApiUrl(api_url.value);
-        setRedirectApiUrl(redirect_url.value);
-
-        console.log('valuess', apiUrl, redirectUrl);
+    //If dev enviroment get localhost url
+    if (process.env.REACT_APP_ENVIRONMENT == 'development') {
+      try {
+        const client = getAppConfigClient();
+        const api_url = await client.getConfigurationSetting({
+          key: 'REACT_APP_API_URL_DEV',
+        });
+        const redirect_url = await client.getConfigurationSetting({
+          key: 'REACT_APP_REDERICT_URI_DEV',
+        });
+        if (api_url.value != undefined && redirect_url.value != undefined) {
+          setApiUrl(api_url.value);
+          setRedirectApiUrl(redirect_url.value);
+  
+          console.log('valuess', apiUrl, redirectUrl);
+        }
+      } catch (error) {
+        console.log(error);
       }
-    } catch (error) {
-      console.log(error);
     }
+    else{
+      try {
+        const client = getAppConfigClient();
+        const api_url = await client.getConfigurationSetting({
+          key: 'REACT_APP_API_URL',
+        });
+        const redirect_url = await client.getConfigurationSetting({
+          key: 'REACT_APP_REDERICT_URI',
+        });
+        if (api_url.value != undefined && redirect_url.value != undefined) {
+          setApiUrl(api_url.value);
+          setRedirectApiUrl(redirect_url.value);
+  
+          console.log('valuess', apiUrl, redirectUrl);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
   };
 
   if (apiUrl == null ||  redirectUrl == null) {

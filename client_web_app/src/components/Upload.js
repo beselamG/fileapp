@@ -37,7 +37,7 @@ export default function Upload({ localAccountId }) {
     if (hasBlobWrite(instance)) {
       
         
-      blobs.getContainer().then(conts => {
+      blobs.getContainer(apiUrl).then(conts => {
      
         setContainer(conts);
         setSelectedContainer(conts[0].contName);

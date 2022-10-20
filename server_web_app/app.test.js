@@ -6,9 +6,8 @@ describe('GET /dbTest', () => {
   // 200 status code
   // json
   it('test dbTest', async () => {
-/*     await request(app)
-      .get('/dbTest')    */ 
-      expect(4).toBe(4);
+    await request(app)
+      .get('/dbTest')
   });
 
 });

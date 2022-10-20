@@ -29,6 +29,7 @@ steps:
     npm run test
   displayName: 'npm run test'
 - task: ArchiveFiles@2
+  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
   inputs:
     rootFolderOrFile: '$(zipPath)'
     includeRootFolder: false
@@ -36,6 +37,7 @@ steps:
     archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
     replaceExistingArchive: true
 - task: PublishBuildArtifacts@1
+  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
   inputs:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
     ArtifactName: 'dropserver2'

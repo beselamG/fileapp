@@ -75,6 +75,7 @@ app.post('/dbUpload', async (req, res) => {
   const ownerId = req.body.ownerId;
   const blobUrl = req.body.blobUrl;
 
+  //Upload in require('./blobStorage.js');
   dbUpload(containerName, fileName, ownerId, blobUrl)
     .then((msg) => {
       console.log(msg);

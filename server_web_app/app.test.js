@@ -8,7 +8,7 @@ describe('GET /dbTest', () => {
   it('test dbTest', async () => {
 /*     await request(app)
       .get('/dbTest')    */ 
-      expect(3).toBe(3);
+      expect(4).toBe(4);
   });
 
 });

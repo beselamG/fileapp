@@ -1,7 +1,7 @@
 trigger:
   paths:
     include:
-    - server_web_app/*
+    - client_web_app/*
   branches:
     include:
     - master

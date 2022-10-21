@@ -15,6 +15,7 @@ export default function Upload({ localAccountId }) {
   const [selectedContainer, setSelectedContainer] = useState();
   const [apiUrl] = useContext(AppConfigContext);
   const [containerName, setContainerName] = useState('');
+  const [containerDeleteName, setContainerDeleteName] = useState('');
   const [refreshContainer, setRefreshContainer] = useState(true);
 
   // retrieve account roles
@@ -27,10 +28,16 @@ export default function Upload({ localAccountId }) {
   function handleContainerChange(event) {
     setContainerName(event.target.value);
   }
-  //handle container dropdow select
-  const handleSelect = (event) => {
+  //handle container dropdown select
+  const handleContainerSelect = (event) => {
     console.log('Handle select');
     setSelectedContainer(event.target.value);
+
+  };
+  //handle container removal dropdown select
+  const handleContainerDeleteSelect = (event) => {
+    console.log('Handle delete select');
+    setContainerDeleteName(event.target.value);
 
   };
 
@@ -42,6 +49,7 @@ export default function Upload({ localAccountId }) {
       blobs.getContainer(apiUrl).then(conts => {
         setContainer(conts);
         setSelectedContainer(conts[0].contName);
+        setContainerDeleteName(conts[0].contName);
 
       });
       //otherwise no write permission
@@ -77,8 +85,8 @@ export default function Upload({ localAccountId }) {
     });
 
   }
-
-  async function handleContainerSubmit(event) {
+  //Handle container create submit and make axios post requiest to /createContainer API
+  async function handleContainerCreateSubmit(event) {
     event.preventDefault();
     const url = `${apiUrl}/createContainer`;
     const body = { containerName: containerName };
@@ -92,6 +100,23 @@ export default function Upload({ localAccountId }) {
       });
   }
 
+  //Handle container delete submit and make axios post requiest to /deleteContainer API
+  async function handleContainerDeleteSubmit(event) {
+    setUploaded(false);
+    event.preventDefault();
+    const url = `${apiUrl}/deleteContainer`;
+    const body = { containerName: containerDeleteName };
+    axios.post(url, body)
+      .then(response => {
+        console.log(response);
+        setContainerDeleteName('');
+        setRefreshContainer(!refreshContainer);
+        setUploaded(true);
+      }).catch(err => {
+        alert('Container Delete Error', err);
+      });
+  }
+
 
   // if has write permission
   if (hasBlobWrite(instance)) {
@@ -100,7 +125,7 @@ export default function Upload({ localAccountId }) {
         <div className='uploadMain'>
           {/* ADD CONTAINERS should add Admin permission for this*/}
           <div>
-            <form className="containerForm" onSubmit={handleContainerSubmit}>
+            <form className="containerForm" onSubmit={handleContainerCreateSubmit}>
               <h2>Create Container</h2>
               <label style={{ paddingBottom: 10 }}>Type Container Name</label>
               <input type="text"
@@ -111,16 +136,20 @@ export default function Upload({ localAccountId }) {
             </form>
           </div>
 
-          {/* ADD CONTAINERS should add Admin permission for this*/}
+          {/* DELETE CONTAINERS should add Admin permission for this*/}
           <div>
-            <form className="containerForm" onSubmit={handleContainerSubmit}>
-              <h2>Create Container</h2>
-              <label style={{ paddingBottom: 10 }}>Type Container Name</label>
-              <input type="text"
-                value={containerName}
-                onChange={handleContainerChange}
-                style={{ marginBottom: 10 }} />
-              <button type="submit">Create</button>
+            <form className="containerForm" onSubmit={handleContainerDeleteSubmit}>
+              <h2>Delete Container</h2>
+              <label style={{ paddingBottom: 10 }}>Select Container to be removed</label>
+              <select
+                style={{ marginBottom: 10 }}
+                onChange={handleContainerDeleteSelect}
+                value={containerDeleteName}>
+                {containers.map((x, i) =>
+                  <option key={i} value={x.contName}>{x.contName}</option>
+                )}
+              </select>
+              <button type="submit">Delete</button>
             </form>
           </div>
 
@@ -132,7 +161,7 @@ export default function Upload({ localAccountId }) {
               <label style={{ paddingBottom: 10 }}>Choose a Conainer</label>
               <select
                 style={{ marginBottom: 10 }}
-                onChange={handleSelect}
+                onChange={handleContainerSelect}
                 value={selectedContainer}>
                 {containers.map((x, i) =>
                   <option key={i} value={x.contName}>{x.contName}</option>

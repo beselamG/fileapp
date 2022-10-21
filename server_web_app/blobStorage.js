@@ -1,5 +1,5 @@
 const { getBlobService } = require('./keyVault');
-const { dbTest, dbUpload, dbDelete } = require('./dbQuery.js');
+const { dbTest, dbUpload, dbDeleteFile, dbDeleteContainer } = require('./dbQuery.js');
 
 
 
@@ -57,6 +57,27 @@ const createContainer = async function (containerName) {
   }
 
 }
+const deleteContainer = async function (containerName) {
+  try {
+    const blobService = await getBlobService();
+    // Get a reference to a container
+    const response = await blobService.deleteContainer(containerName);
+
+    //delete database record
+    dbDeleteContainer(containerName)
+      .then(() => { })
+      .catch((err) => {
+        console.error(err);
+        throw err;
+      });
+
+    const msg = `deleted ${containerName} container`;
+    return msg
+  } catch (err) {
+    throw (err);
+  }
+
+}
 
 const uploadBlob = async function (containerName, blobFile, loacalAccountId) {
   try {
@@ -99,7 +120,7 @@ const deleteBlob = async function (containerName, blobName) {
     await blockBlobClient.delete(options);
 
     //delete database record
-    dbDelete(containerName, blobName)
+    dbDeleteFile(containerName, blobName)
       .then(() => { })
       .catch((err) => {
         console.error(err);
@@ -113,4 +134,4 @@ const deleteBlob = async function (containerName, blobName) {
   }
 };
 
-module.exports = { getContainerList, uploadBlob, deleteBlob, createContainer };
+module.exports = { getContainerList, uploadBlob, deleteBlob, createContainer, deleteContainer };

@@ -28,6 +28,7 @@ steps:
     npm run build
     popd
     cd ..
+  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
   displayName: 'npm run build'
 - task: ArchiveFiles@2
   condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))

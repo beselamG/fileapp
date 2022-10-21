@@ -43,6 +43,30 @@
 .uploadForm {
   display: flex;
   flex-direction: column;
+
+  border: black solid 1px;
+  padding: 5px;
+  height: 200px;
+  max-width: 250px;
+  justify-content: space-between;
+}
+.containerForm {
+  display: flex;
+  flex-direction: column;
+
+  border: black solid 1px;
+  padding: 5px;
+  height: 200px;
+  max-width: 250px;
+  justify-content: space-between;
+}
+.uploadMain {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  justify-content: space-around;
+
+
 }
 .searchBar{
   width: 50%;

@@ -8,6 +8,7 @@ const {
   getContainerList,
   uploadBlob,
   deleteBlob,
+  createContainer
 } = require('./blobStorage.js');
 const { dbTest, dbUpload } = require('./dbQuery.js');
 
@@ -85,6 +86,20 @@ app.post('/dbUpload', async (req, res) => {
       res.status(400).send('Something went wrong!');
     });
 });
+
+app.post('/createContainer', async (req, res) => {
+  const containerName = req.body.containerName;
+  console.log("CREATE NAME: ", containerName);
+  createContainer(containerName)
+    .then((msg) => {
+      console.log(msg);
+      res.send(msg);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(400).send('Something went wrong!');
+    });
+})
 
 app.post('/dbDelele', async (req, res) => {
   const containerName = req.body.containerName;

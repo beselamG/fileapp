@@ -43,6 +43,21 @@ const getBlobList = async function (containerName) {
   return await blobArr;
 };
 
+const createContainer = async function (containerName) {
+  try {
+    const blobService = await getBlobService();
+    // Get a reference to a container
+    const containerClient = blobService.getContainerClient(containerName);
+    // Create the container
+    const createContainerResponse = await containerClient.create();
+    const msg = `Container was created successfully.\n\trequestId:${createContainerResponse.requestId}\n\tURL: ${containerClient.url}`;
+    return msg
+  } catch (err) {
+    throw (err);
+  }
+
+}
+
 const uploadBlob = async function (containerName, blobFile, loacalAccountId) {
   try {
     const blobService = await getBlobService();
@@ -60,7 +75,7 @@ const uploadBlob = async function (containerName, blobFile, loacalAccountId) {
 
     // write into database
     dbUpload(containerName, blobName, loacalAccountId, blockBlobClient.url)
-      .then(() => {})
+      .then(() => { })
       .catch((err) => {
         console.error(err);
         throw err;
@@ -85,7 +100,7 @@ const deleteBlob = async function (containerName, blobName) {
 
     //delete database record
     dbDelete(containerName, blobName)
-      .then(() => {})
+      .then(() => { })
       .catch((err) => {
         console.error(err);
         throw err;
@@ -98,4 +113,4 @@ const deleteBlob = async function (containerName, blobName) {
   }
 };
 
-module.exports = { getContainerList, uploadBlob, deleteBlob };
+module.exports = { getContainerList, uploadBlob, deleteBlob, createContainer };

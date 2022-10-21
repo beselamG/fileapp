@@ -126,7 +126,6 @@ export default function DisplayFiles({ uploaded, localAccountId }) {
                   <th>Download File</th>
                   <th>delete</th>
                 </tr>
-                {/* Conditianal render here. If search is not null show matches, or "no matches" */}
                 {searchResults.map(x =>
                   <tr key={Math.random() * 9999}>
                     <td key={Math.random() * 9999}>

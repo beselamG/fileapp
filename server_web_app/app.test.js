@@ -4,7 +4,7 @@ const app = require('./app.js');
 describe('GET', () => {
   // test db test whether return
   // 200 status code
-  // json
+  // { hello: 'hello' }
   it('test /', async () => {
     await request(app)
       .get('/')

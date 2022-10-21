@@ -1,13 +1,15 @@
 const request = require('supertest');
 const app = require('./app.js');
 
-describe('GET /dbTest', () => {
+describe('GET', () => {
   // test db test whether return
   // 200 status code
   // json
-  it('test dbTest', async () => {
+  it('test /', async () => {
     await request(app)
-      .get('/dbTest')
+      .get('/')
+      .expect(200)
+      .expect({ hello: 'hello' })
   });
 
 });

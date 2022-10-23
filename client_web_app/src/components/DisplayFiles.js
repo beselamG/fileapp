@@ -6,6 +6,9 @@ import blobs from './blobs';
 import { hasBlobWrite, hasBlobRead } from './rbac';
 import { AppConfigContext } from '../AppConfigContext';
 import { saveAs } from 'file-saver';
+import SearchIcon from '@mui/icons-material/Search';
+import FileDownloadRoundedIcon from '@mui/icons-material/FileDownloadRounded';
+import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 
 
 export default function DisplayFiles({ uploaded, localAccountId }) {
@@ -106,12 +109,12 @@ export default function DisplayFiles({ uploaded, localAccountId }) {
   // if has read permission
   if (hasBlobRead(instance)) {
     return (
-      <div className="App" >
-        <h1>Search by file name</h1>
+      <div className="allFiles" >
+        <span> <SearchIcon/> </span>
         <input value={searchTerm}
           onChange={searchChange}
-          className="searchBar" />
-        <h1>Files</h1>
+          className="searchBar" 
+          placeholder='Search by file name '/>
         <div className="tableContainer">
           {/* If fetching DB data  */}
           {loading ? (
@@ -124,7 +127,7 @@ export default function DisplayFiles({ uploaded, localAccountId }) {
                   <th>File name</th>
                   <th>Uploaded by Id</th>
                   <th>Download File</th>
-                  <th>delete</th>
+                  <th>Delete</th>
                 </tr>
                 {searchResults.map(x =>
                   <tr key={Math.random() * 9999}>
@@ -139,12 +142,12 @@ export default function DisplayFiles({ uploaded, localAccountId }) {
                     </td>
                     <td key={Math.random() * 9999}>
                       <button className="downloadBtn" onClick={event => handleDownload(event, x.BlobURL, x.FileName)}>
-                        download
+                        <FileDownloadRoundedIcon/>
                       </button>
                     </td>
                     <td key={Math.random() * 9999}>
                       <button className="deleteBtn" onClick={event => handleDelete(event, x.BlobURL, x.FileName, x.ContainerName)}>
-                        delete
+                        <DeleteRoundedIcon/>
                       </button>
                     </td>
                   </tr>

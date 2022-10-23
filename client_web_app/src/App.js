@@ -64,7 +64,7 @@ function ProfileContent() {
   return (
     <>
       <h5 className="card-title">Welcome {name}</h5>
-      {accessToken ? <p>Access Token Acquired!</p> : <p>No Access token</p>}
+      {accessToken ? <p>Your roles are: {instance.getActiveAccount().idTokenClaims.roles.toString()}</p> : <p>No Access token</p>}
       <Upload localAccountId={localAccountId} />
     </>
   );

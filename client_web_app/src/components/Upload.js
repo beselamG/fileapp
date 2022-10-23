@@ -6,6 +6,10 @@ import blobs from './blobs';
 import { useMsal } from '@azure/msal-react';
 import { hasBlobWrite, hasBlobRead } from './rbac';
 import { AppConfigContext } from '../AppConfigContext';
+import { Collapse } from 'react-collapse';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+
 
 
 export default function Upload({ localAccountId }) {
@@ -17,6 +21,10 @@ export default function Upload({ localAccountId }) {
   const [containerName, setContainerName] = useState('');
   const [containerDeleteName, setContainerDeleteName] = useState('');
   const [refreshContainer, setRefreshContainer] = useState(true);
+  const [createContainerOpen, setCreateContainerOpen] = useState(false);
+  const [deleteContainerOpen, setDeleteContainerOpen] = useState(false);
+  const [uploadOpen, setUploadOpen] = useState(false);
+
 
   // retrieve account roles
   const { instance } = useMsal();
@@ -117,6 +125,17 @@ export default function Upload({ localAccountId }) {
       });
   }
 
+  const createContainerToggle = () => {
+    setCreateContainerOpen(createContainerOpen => !createContainerOpen);
+  };
+  const deleteContainerToggle = () => {
+    setDeleteContainerOpen(deleteContainerOpen => !deleteContainerOpen);
+  };
+  const uploadToggle = () => {
+    setUploadOpen(uploadOpen => !uploadOpen);
+  };
+
+
 
   // if has write permission
   if (hasBlobWrite(instance)) {
@@ -124,55 +143,70 @@ export default function Upload({ localAccountId }) {
       <>
         <div className='uploadMain'>
           {/* ADD CONTAINERS should add Admin permission for this*/}
-          <div>
-            <form className="containerForm" onSubmit={handleContainerCreateSubmit}>
-              <h2>Create Container</h2>
-              <label style={{ paddingBottom: 10 }}>Type Container Name</label>
-              <input type="text"
-                value={containerName}
-                onChange={handleContainerChange}
-                style={{ marginBottom: 10 }} />
-              <button type="submit">Create</button>
-            </form>
-          </div>
+          <button className="adminButton" onClick={createContainerToggle}>Create Container - Requires Owner Role
+            {createContainerOpen ? <ArrowDownwardIcon /> : <ArrowForwardIcon />}</button>
+          <Collapse isOpened={createContainerOpen}>
+            <div>
+              <form className="containerForm" onSubmit={handleContainerCreateSubmit}>
+                <h2>Create Container</h2>
+                <label style={{ paddingBottom: 10 }}>Type Container Name</label>
+                <input type="text"
+                  value={containerName}
+                  onChange={handleContainerChange}
+                  style={{ marginBottom: 10 }} />
+                <button className='formButton' type="submit">Create</button>
+              </form>
+            </div>
+          </Collapse>
 
           {/* DELETE CONTAINERS should add Admin permission for this*/}
-          <div>
-            <form className="containerForm" onSubmit={handleContainerDeleteSubmit}>
-              <h2>Delete Container</h2>
-              <label style={{ paddingBottom: 10 }}>Select Container to be removed</label>
-              <select
-                style={{ marginBottom: 10 }}
-                onChange={handleContainerDeleteSelect}
-                value={containerDeleteName}>
-                {containers.map((x, i) =>
-                  <option key={i} value={x.contName}>{x.contName}</option>
-                )}
-              </select>
-              <button type="submit">Delete</button>
-            </form>
-          </div>
+          <button className="adminButton" onClick={deleteContainerToggle}>Delete Container - Requires Owner Role
+            {deleteContainerOpen ? <ArrowDownwardIcon /> : <ArrowForwardIcon />}</button>
+          <Collapse isOpened={deleteContainerOpen}>
+            <div>
+              <form className="containerForm" onSubmit={handleContainerDeleteSubmit}>
+                <h2>Delete Container</h2>
+                <label style={{ paddingBottom: 10 }}>Select Container to be removed</label>
+                <select
+                  style={{ marginBottom: 10 }}
+                  onChange={handleContainerDeleteSelect}
+                  value={containerDeleteName}>
+                  {containers.map((x, i) =>
+                    <option key={i} value={x.contName}>{x.contName}</option>
+                  )}
+                </select>
+                <button className='formButton' type="submit">Delete</button>
+              </form>
+            </div>
+          </Collapse>
+
 
 
           {/* UPLOAD FORM */}
-          <div>
-            <form className="uploadForm" onSubmit={handleFileSubmit} >
-              <h2>File Upload</h2>
-              <label style={{ paddingBottom: 10 }}>Choose a Conainer</label>
-              <select
-                style={{ marginBottom: 10 }}
-                onChange={handleContainerSelect}
-                value={selectedContainer}>
-                {containers.map((x, i) =>
-                  <option key={i} value={x.contName}>{x.contName}</option>
-                )}
-              </select>
-              <input encType="multipart/form-data" name="file" type="file"
-                onChange={handleFileChange}
-                style={{ marginBottom: 10 }} />
-              <button type="submit">Upload</button>
-            </form>
-          </div>
+          <button className="adminButton" onClick={uploadToggle}>Upload File - Requires Writer Role
+            {uploadOpen ? <ArrowDownwardIcon /> : <ArrowForwardIcon />}</button>
+          <Collapse isOpened={uploadOpen}>
+            <div>
+              <form className="uploadForm" onSubmit={handleFileSubmit} >
+                <h2>File Upload</h2>
+                <label style={{ paddingBottom: 10 }}>Choose a Conainer</label>
+                <select
+                  style={{ marginBottom: 10 }}
+                  onChange={handleContainerSelect}
+                  value={selectedContainer}>
+                  {containers.map((x, i) =>
+                    <option key={i} value={x.contName}>{x.contName}</option>
+                  )}
+                </select>
+                <input encType="multipart/form-data" name="file" type="file"
+                  onChange={handleFileChange}
+                  style={{ marginBottom: 10 }} />
+                <button className='formButton' type="submit">Upload</button>
+              </form>
+            </div>
+          </Collapse>
+
+
         </div>
         <DisplayFiles uploaded={uploaded} localAccountId={localAccountId} />
       </>

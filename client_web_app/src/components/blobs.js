@@ -19,6 +19,26 @@ const getContainer = (apiUrl) => {
     return response.data;
   });
 };
+const uploadBlob = async (apiUrl, file, localAccountId, selectedContainer) => {
+  const url = `${apiUrl}/upload`;
+  console.log(file);
+  let formData = new FormData();
+  formData.append('localAccountId', localAccountId);
+  formData.append('file', file);
+  formData.append('containerName', selectedContainer);
+  console.log(formData);
+  await axios({
+    method: 'post',
+    url: url,
+    data: formData,
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    }
+  }).then((response)=>{
+    alert(JSON.stringify(response.data));
+  });
   
-  
-export default {getSQL, getContainer};
+};
+
+
+export default { getSQL, getContainer, uploadBlob };

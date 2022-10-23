@@ -24,6 +24,7 @@ export default function Upload({ localAccountId }) {
   const [createContainerOpen, setCreateContainerOpen] = useState(false);
   const [deleteContainerOpen, setDeleteContainerOpen] = useState(false);
   const [uploadOpen, setUploadOpen] = useState(false);
+  const [blob, setBlob] = useState([]);
 
 
   // retrieve account roles
@@ -66,33 +67,55 @@ export default function Upload({ localAccountId }) {
     }
   }, [localAccountId, refreshContainer]);
 
+  const fileExists = () => {
+    //GET blobs and compare if same container/blob match
+    //Get all from SQL
+    blobs.getSQL(apiUrl).then(initialBlobs => {
+      console.log(initialBlobs);
+      setBlob(initialBlobs);
+    });
+    //Search all blob URLs => compare to would be url end with container/file
+    const urlEnd = `/${selectedContainer}/${file.name}`;
+    const result = blob.filter(b =>
+      b.BlobURL.toLowerCase().includes(urlEnd)
+    );
+    console.log('MATCH:', result);
+    if (result.length > 0) return true;
+    else return false;
+  };
 
-  //Handle submit and post file to api
+
+  //Handle submit and post file to /upload API
   async function handleFileSubmit(event) {
     event.preventDefault();
     setUploaded(false);
-    const url = `${apiUrl}/upload`;
-    console.log(file);
-    let formData = new FormData();
-    formData.append('localAccountId', localAccountId);
-    formData.append('file', file);
-    formData.append('containerName', selectedContainer);
-    console.log(formData);
-    await axios({
-      method: 'post',
-      url: url,
-      data: formData,
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      }
-    }).then(results => {
-      alert(JSON.stringify(results.data));
-      setUploaded(true);
-    }).catch(err => {
-      alert('Upload Error');
-    });
+    //Check if file exist in that container
+    if (fileExists()) {
+      //If it exist you can choose if replace the previous or not upload
+      if (window.confirm(`This file name "${file.name}" allready exist in container "${selectedContainer}"
+                          \n\tChoose OK to replace the current file.\n\t Press Cancel to not upload`)) {
+        blobs.uploadBlob(apiUrl, file, localAccountId, selectedContainer).then(() => {
+          setUploaded(true);
+        }).catch(err => {
+          alert('Upload Error' + err.toString());
+        });
 
+      } else {
+        // Do nothing if alert window select close!
+        console.log('Not uploaded');
+      }
+    }
+    //If file does not exist it uploads
+    else {
+      blobs.uploadBlob(apiUrl, file, localAccountId, selectedContainer).then(() => {
+        setUploaded(true);
+      }).catch(err => {
+        alert('Upload Error' + err.toString());
+      });
+    }
   }
+
+
   //Handle container create submit and make axios post requiest to /createContainer API
   async function handleContainerCreateSubmit(event) {
     event.preventDefault();
@@ -104,7 +127,7 @@ export default function Upload({ localAccountId }) {
         setContainerName('');
         setRefreshContainer(!refreshContainer);
       }).catch(err => {
-        alert('Container Create Error', err);
+        alert('Container Create Error' + err.toString());
       });
   }
 
@@ -121,7 +144,7 @@ export default function Upload({ localAccountId }) {
         setRefreshContainer(!refreshContainer);
         setUploaded(true);
       }).catch(err => {
-        alert('Container Delete Error', err);
+        alert('Container Delete Error' + err.toString());
       });
   }
 
@@ -143,7 +166,7 @@ export default function Upload({ localAccountId }) {
       <>
         <div className='uploadMain'>
           {/* ADD CONTAINERS should add Admin permission for this*/}
-          <button className="adminButton" onClick={createContainerToggle}>Create Container - Requires Owner Role
+          <button className="adminButton" onClick={createContainerToggle}>Create Container - Requires Writer Role
             {createContainerOpen ? <ArrowDownwardIcon /> : <ArrowForwardIcon />}</button>
           <Collapse isOpened={createContainerOpen}>
             <div>
@@ -160,7 +183,7 @@ export default function Upload({ localAccountId }) {
           </Collapse>
 
           {/* DELETE CONTAINERS should add Admin permission for this*/}
-          <button className="adminButton" onClick={deleteContainerToggle}>Delete Container - Requires Owner Role
+          <button className="adminButton" onClick={deleteContainerToggle}>Delete Container - Requires Writer Role
             {deleteContainerOpen ? <ArrowDownwardIcon /> : <ArrowForwardIcon />}</button>
           <Collapse isOpened={deleteContainerOpen}>
             <div>

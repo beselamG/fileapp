@@ -89,18 +89,16 @@ export default function Upload({ localAccountId }) {
     }
   }, [localAccountId, refreshContainer]);
 
-  const fileExists = async () => {
+  const fileExists = () => {
     //GET blobs and compare if same container/blob match
     //Search all blob URLs => compare to would be url end with container/file
     const urlEnd = `/${selectedContainer}/${file.name}`;
-    const result = await blob.filter(b => {
-      b.BlobURL.toLowerCase().includes(urlEnd);
-      console.log('end ', urlEnd);
-      console.log('new', b.BlobURL.toLowerCase());
-    });
-
-    
-
+    const result = blob.filter(b =>
+      b.BlobURL.toLowerCase().includes(urlEnd)
+    );
+    console.log('MATCH:', result);
+    if (result.length > 0) return true;
+    else return false;
   };
 
 
@@ -109,7 +107,7 @@ export default function Upload({ localAccountId }) {
     event.preventDefault(); 
     setUploaded(false);
     //Check if file exist in that container
-    const exists = await fileExists();
+    const exists = fileExists();
     if (exists) {
       console.log('EXISTS');
       //If it exist you can choose if replace the previous or not upload
@@ -128,6 +126,7 @@ export default function Upload({ localAccountId }) {
     }
     //If file does not exist it uploads
     else {
+      console.log('DOES NOT EXIST');
       blobs.uploadBlob(apiUrl, file, localAccountId, selectedContainer, exists).then(() => {
         setUploaded(true);
       }).catch(err => {

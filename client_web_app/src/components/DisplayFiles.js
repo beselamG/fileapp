@@ -22,6 +22,8 @@ export default function DisplayFiles({ uploaded, localAccountId }) {
   const [apiUrl] = useContext(AppConfigContext);
 
 
+
+
   //Search bar input change
   const searchChange = (event) => {
     setSearchTerm(event.target.value);
@@ -41,12 +43,16 @@ export default function DisplayFiles({ uploaded, localAccountId }) {
   useEffect(() => {
     console.log('effect');
     blobUpdate(apiUrl);
+   
     console.log(localAccountId);
   }, []);
   //get after new file upload
   useEffect(() => {
     blobUpdate(apiUrl);
   }, [uploaded, localAccountId]);
+  useEffect(() => {
+    setSearchResults(blob);
+  }, [blob]);
 
   // retrieve account roles
   const { instance } = useMsal();
@@ -70,8 +76,9 @@ export default function DisplayFiles({ uploaded, localAccountId }) {
           if (response.status == 200) {
             console.log('Deleted');
             setSearchResults(blob.filter(p => p.BlobURL !== BlobURL));
-            setBlob(blob.filter(p => p.BlobURL !== BlobURL));
             setSearchTerm('');
+            blobUpdate(apiUrl);
+            
           }
         });
     } else {

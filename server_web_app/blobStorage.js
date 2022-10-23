@@ -95,7 +95,7 @@ const uploadBlob = async function (containerName, blobFile, loacalAccountId, exi
     const msg = `Upload block blob ${blobName} successfully`;
 
     // write into database
-    if (exists == false) {
+    if (true) {
       dbUpload(containerName, blobName, loacalAccountId, blockBlobClient.url)
         .then(() => { })
         .catch((err) => {

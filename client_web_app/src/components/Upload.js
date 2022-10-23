@@ -15,6 +15,7 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 export default function Upload({ localAccountId }) {
   const [file, setFile] = useState();
   const [uploaded, setUploaded] = useState(false);
+  const [deleted, setDeleted] = useState(false);
   const [containers, setContainer] = useState([]);
   const [selectedContainer, setSelectedContainer] = useState();
   const [apiUrl] = useContext(AppConfigContext);
@@ -50,6 +51,31 @@ export default function Upload({ localAccountId }) {
 
   };
 
+  //GET blobs to compare if they exist when uppload
+  useEffect(() => {
+    console.log('effect');
+    getBlob();
+    console.log(localAccountId);
+  }, [localAccountId]);
+  //get after page reload
+  useEffect(() => {
+    console.log('effect');
+    getBlob();
+    console.log(localAccountId);
+  }, []);
+  useEffect(() => {
+    console.log('effect');
+    getBlob();
+    console.log(localAccountId);
+  }, [uploaded]);
+
+
+  const getBlob = async () => {
+    blobs.getSQL(apiUrl).then(initialBlobs => {
+      console.log(initialBlobs);
+      setBlob(initialBlobs);
+    });
+  };
 
   //Get all containers here when signed in and when new container is created
   useEffect(() => {
@@ -69,11 +95,6 @@ export default function Upload({ localAccountId }) {
 
   const fileExists = () => {
     //GET blobs and compare if same container/blob match
-    //Get all from SQL
-    blobs.getSQL(apiUrl).then(initialBlobs => {
-      console.log(initialBlobs);
-      setBlob(initialBlobs);
-    });
     //Search all blob URLs => compare to would be url end with container/file
     const urlEnd = `/${selectedContainer}/${file.name}`;
     const result = blob.filter(b =>
@@ -90,11 +111,13 @@ export default function Upload({ localAccountId }) {
     event.preventDefault();
     setUploaded(false);
     //Check if file exist in that container
+    
     if (fileExists()) {
+      const exists = true;
       //If it exist you can choose if replace the previous or not upload
       if (window.confirm(`This file name "${file.name}" allready exist in container "${selectedContainer}"
                           \n\tChoose OK to replace the current file.\n\t Press Cancel to not upload`)) {
-        blobs.uploadBlob(apiUrl, file, localAccountId, selectedContainer).then(() => {
+        blobs.uploadBlob(apiUrl, file, localAccountId, selectedContainer, exists).then(() => {
           setUploaded(true);
         }).catch(err => {
           alert('Upload Error' + err.toString());
@@ -107,7 +130,8 @@ export default function Upload({ localAccountId }) {
     }
     //If file does not exist it uploads
     else {
-      blobs.uploadBlob(apiUrl, file, localAccountId, selectedContainer).then(() => {
+      const exists = false;
+      blobs.uploadBlob(apiUrl, file, localAccountId, selectedContainer, exists).then(() => {
         setUploaded(true);
       }).catch(err => {
         alert('Upload Error' + err.toString());

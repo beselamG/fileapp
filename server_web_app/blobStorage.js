@@ -1,5 +1,5 @@
 const { getBlobService } = require('./keyVault');
-const { dbTest, dbUpload, dbDeleteFile, dbDeleteContainer } = require('./dbQuery.js');
+const { dbTest, dbUpdate, dbUpload, dbDeleteFile, dbDeleteContainer } = require('./dbQuery.js');
 
 
 
@@ -79,7 +79,7 @@ const deleteContainer = async function (containerName) {
 
 }
 
-const uploadBlob = async function (containerName, blobFile, loacalAccountId) {
+const uploadBlob = async function (containerName, blobFile, loacalAccountId, exists) {
   try {
     const blobService = await getBlobService();
     const containerClient = blobService.getContainerClient(containerName);
@@ -95,12 +95,23 @@ const uploadBlob = async function (containerName, blobFile, loacalAccountId) {
     const msg = `Upload block blob ${blobName} successfully`;
 
     // write into database
-    dbUpload(containerName, blobName, loacalAccountId, blockBlobClient.url)
-      .then(() => { })
-      .catch((err) => {
-        console.error(err);
-        throw err;
-      });
+    if (exists == false) {
+      dbUpload(containerName, blobName, loacalAccountId, blockBlobClient.url)
+        .then(() => { })
+        .catch((err) => {
+          console.error(err);
+          throw err;
+        });
+    } else {
+      console.log("FILE EXISTS");
+      dbUpdate(containerName, blobName, loacalAccountId, blockBlobClient.url)
+        .then(() => { })
+        .catch((err) => {
+          console.error(err);
+          throw err;
+        });
+    }
+
 
     return msg;
   } catch (err) {

@@ -19,11 +19,12 @@ const getContainer = (apiUrl) => {
     return response.data;
   });
 };
-const uploadBlob = async (apiUrl, file, localAccountId, selectedContainer) => {
+const uploadBlob = async (apiUrl, file, localAccountId, selectedContainer, exists) => {
   const url = `${apiUrl}/upload`;
   console.log(file);
   let formData = new FormData();
   formData.append('localAccountId', localAccountId);
+  formData.append('exists', exists);
   formData.append('file', file);
   formData.append('containerName', selectedContainer);
   console.log(formData);

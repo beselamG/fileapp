@@ -15,7 +15,7 @@ const getSQL = async (apiUrl) => {
 const getContainer = (apiUrl) => {
   const request = axios.get(`${apiUrl}/getContainer`);
   return request.then(response => {
-    console.log(response.data);
+    console.log('constainers', response.data);
     return response.data;
   });
 };
@@ -35,10 +35,10 @@ const uploadBlob = async (apiUrl, file, localAccountId, selectedContainer, exist
     headers: {
       'Content-Type': 'multipart/form-data',
     }
-  }).then((response)=>{
+  }).then((response) => {
     alert(JSON.stringify(response.data));
   });
-  
+
 };
 
 

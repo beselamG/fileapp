@@ -104,6 +104,7 @@ const uploadBlob = async function (containerName, blobFile, loacalAccountId, exi
         });
     } else {
       console.log("FILE EXISTS");
+      console.log('EXISTS');
       dbUpdate(containerName, blobName, loacalAccountId, blockBlobClient.url)
         .then(() => { })
         .catch((err) => {

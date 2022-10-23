@@ -1,21 +1,22 @@
 import React, { useContext } from 'react';
 import { useState, useEffect } from 'react';
+import { useBlobs, useBlobsUpdate } from './BlobContext.js';
 import axios from 'axios';
 import DisplayFiles from './DisplayFiles';
-import blobs from './blobs';
 import { useMsal } from '@azure/msal-react';
 import { hasBlobWrite, hasBlobRead } from './rbac';
 import { AppConfigContext } from '../AppConfigContext';
 import { Collapse } from 'react-collapse';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import blobs from './blobs';
+
 
 
 
 export default function Upload({ localAccountId }) {
   const [file, setFile] = useState();
   const [uploaded, setUploaded] = useState(false);
-  const [deleted, setDeleted] = useState(false);
   const [containers, setContainer] = useState([]);
   const [selectedContainer, setSelectedContainer] = useState();
   const [apiUrl] = useContext(AppConfigContext);
@@ -25,7 +26,8 @@ export default function Upload({ localAccountId }) {
   const [createContainerOpen, setCreateContainerOpen] = useState(false);
   const [deleteContainerOpen, setDeleteContainerOpen] = useState(false);
   const [uploadOpen, setUploadOpen] = useState(false);
-  const [blob, setBlob] = useState([]);
+  const blob = useBlobs();
+  const blobUpdate = useBlobsUpdate();
 
 
   // retrieve account roles
@@ -54,28 +56,22 @@ export default function Upload({ localAccountId }) {
   //GET blobs to compare if they exist when uppload
   useEffect(() => {
     console.log('effect');
-    getBlob();
+    blobUpdate;
     console.log(localAccountId);
   }, [localAccountId]);
   //get after page reload
   useEffect(() => {
     console.log('effect');
-    getBlob();
+    blobUpdate;
     console.log(localAccountId);
   }, []);
   useEffect(() => {
     console.log('effect');
-    getBlob();
+    blobUpdate;
     console.log(localAccountId);
   }, [uploaded]);
 
 
-  const getBlob = async () => {
-    blobs.getSQL(apiUrl).then(initialBlobs => {
-      console.log(initialBlobs);
-      setBlob(initialBlobs);
-    });
-  };
 
   //Get all containers here when signed in and when new container is created
   useEffect(() => {
@@ -93,27 +89,29 @@ export default function Upload({ localAccountId }) {
     }
   }, [localAccountId, refreshContainer]);
 
-  const fileExists = () => {
+  const fileExists = async () => {
     //GET blobs and compare if same container/blob match
     //Search all blob URLs => compare to would be url end with container/file
     const urlEnd = `/${selectedContainer}/${file.name}`;
-    const result = blob.filter(b =>
-      b.BlobURL.toLowerCase().includes(urlEnd)
-    );
-    console.log('MATCH:', result);
-    if (result.length > 0) return true;
-    else return false;
+    const result = await blob.filter(b => {
+      b.BlobURL.toLowerCase().includes(urlEnd);
+      console.log('end ', urlEnd);
+      console.log('new', b.BlobURL.toLowerCase());
+    });
+
+    
+
   };
 
 
   //Handle submit and post file to /upload API
   async function handleFileSubmit(event) {
-    event.preventDefault();
+    event.preventDefault(); 
     setUploaded(false);
     //Check if file exist in that container
-    
-    if (fileExists()) {
-      const exists = true;
+    const exists = await fileExists();
+    if (exists) {
+      console.log('EXISTS');
       //If it exist you can choose if replace the previous or not upload
       if (window.confirm(`This file name "${file.name}" allready exist in container "${selectedContainer}"
                           \n\tChoose OK to replace the current file.\n\t Press Cancel to not upload`)) {
@@ -130,7 +128,6 @@ export default function Upload({ localAccountId }) {
     }
     //If file does not exist it uploads
     else {
-      const exists = false;
       blobs.uploadBlob(apiUrl, file, localAccountId, selectedContainer, exists).then(() => {
         setUploaded(true);
       }).catch(err => {
@@ -187,6 +184,7 @@ export default function Upload({ localAccountId }) {
   // if has write permission
   if (hasBlobWrite(instance)) {
     return (
+
       <>
         <div className='uploadMain'>
           {/* ADD CONTAINERS should add Admin permission for this*/}
@@ -257,6 +255,7 @@ export default function Upload({ localAccountId }) {
         </div>
         <DisplayFiles uploaded={uploaded} localAccountId={localAccountId} />
       </>
+
     );
     // otherwise no write permission
   } else {

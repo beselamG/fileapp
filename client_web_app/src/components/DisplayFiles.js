@@ -9,16 +9,17 @@ import { saveAs } from 'file-saver';
 import SearchIcon from '@mui/icons-material/Search';
 import FileDownloadRoundedIcon from '@mui/icons-material/FileDownloadRounded';
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
+import { useBlobs, useBlobsUpdate } from './BlobContext.js';
 
 
 export default function DisplayFiles({ uploaded, localAccountId }) {
   const [container, setContainers] = useState([]);
-  const [blob, setBlob] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [searchResults, setSearchResults] = useState([]);
+  const blob = useBlobs();
+  const blobUpdate = useBlobsUpdate();
+  const [searchResults, setSearchResults] = useState(blob);
   const [apiUrl] = useContext(AppConfigContext);
-
 
 
   //Search bar input change
@@ -36,41 +37,21 @@ export default function DisplayFiles({ uploaded, localAccountId }) {
 
   //GET updated data from DB when upload successfull
   //Get after sign in trigger with localAccountId
-  useEffect(() => {
-    console.log('effect');
-    getBlob();
-    console.log(localAccountId);
-  }, [localAccountId]);
   //get after page reload
   useEffect(() => {
     console.log('effect');
-    getBlob();
+    blobUpdate(apiUrl);
     console.log(localAccountId);
   }, []);
   //get after new file upload
   useEffect(() => {
-    getBlob();
-  }, [uploaded]);
+    blobUpdate(apiUrl);
+  }, [uploaded, localAccountId]);
 
   // retrieve account roles
   const { instance } = useMsal();
 
-  const getBlob = async () => {
-    // if has read permission
-    if (hasBlobRead(instance)) {
-      setLoading(true);
-      blobs.getSQL(apiUrl).then(initialBlobs => {
-        console.log(initialBlobs);
-        setBlob(initialBlobs);
-        setSearchResults(initialBlobs);
-        console.log(blob);
-        setLoading(false);
-      });
-      //otherwise no read permission
-    } else {
-      setBlob([]);
-    }
-  };
+
 
 
 
@@ -110,11 +91,11 @@ export default function DisplayFiles({ uploaded, localAccountId }) {
   if (hasBlobRead(instance)) {
     return (
       <div className="allFiles" >
-        <span> <SearchIcon/> </span>
+        <span> <SearchIcon /> </span>
         <input value={searchTerm}
           onChange={searchChange}
-          className="searchBar" 
-          placeholder='Search by file name '/>
+          className="searchBar"
+          placeholder='Search by file name ' />
         <div className="tableContainer">
           {/* If fetching DB data  */}
           {loading ? (
@@ -142,12 +123,12 @@ export default function DisplayFiles({ uploaded, localAccountId }) {
                     </td>
                     <td key={Math.random() * 9999}>
                       <button className="downloadBtn" onClick={event => handleDownload(event, x.BlobURL, x.FileName)}>
-                        <FileDownloadRoundedIcon/>
+                        <FileDownloadRoundedIcon />
                       </button>
                     </td>
                     <td key={Math.random() * 9999}>
                       <button className="deleteBtn" onClick={event => handleDelete(event, x.BlobURL, x.FileName, x.ContainerName)}>
-                        <DeleteRoundedIcon/>
+                        <DeleteRoundedIcon />
                       </button>
                     </td>
                   </tr>

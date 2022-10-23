@@ -14,7 +14,7 @@ import { useBlobs, useBlobsUpdate } from './BlobContext.js';
 
 export default function DisplayFiles({ uploaded, localAccountId }) {
   const [container, setContainers] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const blob = useBlobs();
   const blobUpdate = useBlobsUpdate();
@@ -43,8 +43,6 @@ export default function DisplayFiles({ uploaded, localAccountId }) {
   useEffect(() => {
     console.log('effect');
     blobUpdate(apiUrl);
-   
-    console.log(localAccountId);
   }, []);
   //get after new file upload
   useEffect(() => {
@@ -62,11 +60,11 @@ export default function DisplayFiles({ uploaded, localAccountId }) {
 
 
   //DELETE storage based on container and file name 
-  const handleDelete = (event, BlobURL, FileName, ContainerName) => {
+  const handleDelete = async (event, BlobURL, FileName, ContainerName) => {
     //Ask if sure
     if (window.confirm(`Are you sure you want to delete ${FileName}`)) {
       //setBlob(blob.filter(p => p.BlobURL !== BlobURL))
-      axios.post(`${apiUrl}/dbDelele`, {
+      await axios.post(`${apiUrl}/dbDelele`, {
         containerName: ContainerName,
         fileName: FileName
       })
@@ -75,11 +73,11 @@ export default function DisplayFiles({ uploaded, localAccountId }) {
           //If succesfully deletes, delete item from UI
           if (response.status == 200) {
             console.log('Deleted');
-            setSearchResults(blob.filter(p => p.BlobURL !== BlobURL));
-            setSearchTerm('');
             blobUpdate(apiUrl);
-            
           }
+        }).then(()=>{
+          setSearchResults(blob.filter(p => p.BlobURL !== BlobURL));
+          setSearchTerm('');
         });
     } else {
       // Do nothing if alert window select close!

@@ -95,17 +95,19 @@ const uploadBlob = async function (containerName, blobFile, loacalAccountId, exi
     const msg = `Upload block blob ${blobName} successfully`;
 
     // write into database
-    if (true) {
-      dbUpload(containerName, blobName, loacalAccountId, blockBlobClient.url)
+    console.log('EXISTS VALUE', exists);
+    if (exists == 'true') {
+      console.log("FILE EXISTS");
+      console.log('EXISTS');
+      dbUpdate(containerName, blobName, loacalAccountId, blockBlobClient.url)
         .then(() => { })
         .catch((err) => {
           console.error(err);
           throw err;
         });
     } else {
-      console.log("FILE EXISTS");
-      console.log('EXISTS');
-      dbUpdate(containerName, blobName, loacalAccountId, blockBlobClient.url)
+      console.log('DOES NOT EXIST');
+      dbUpload(containerName, blobName, loacalAccountId, blockBlobClient.url)
         .then(() => { })
         .catch((err) => {
           console.error(err);

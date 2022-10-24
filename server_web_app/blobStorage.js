@@ -1,5 +1,6 @@
 const { getBlobService } = require('./keyVault');
 const { dbTest, dbUpdate, dbUpload, dbDeleteFile, dbDeleteContainer } = require('./dbQuery.js');
+const { BlockBlobClient } = require('@azure/storage-blob');
 
 
 
@@ -122,6 +123,19 @@ const uploadBlob = async function (containerName, blobFile, loacalAccountId, exi
   }
 };
 
+const downloadBlob = async function (containerName, blobName, res) {
+  try {
+    const blobService = await getBlobService();
+    const containerClient = blobService.getContainerClient(containerName);    
+    const blobClient = await containerClient.getBlobClient(blobName);
+    const downloadResponse = await blobClient.download();
+    downloadResponse.readableStreamBody.pipe(res);
+
+  } catch (err) {
+    throw err;
+  }
+}
+
 const deleteBlob = async function (containerName, blobName) {
   try {
     const options = {
@@ -148,4 +162,4 @@ const deleteBlob = async function (containerName, blobName) {
   }
 };
 
-module.exports = { getContainerList, uploadBlob, deleteBlob, createContainer, deleteContainer };
+module.exports = { getContainerList, uploadBlob, deleteBlob, createContainer, deleteContainer, downloadBlob };

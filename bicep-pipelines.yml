@@ -1,0 +1,7 @@
+trigger:
+  paths:
+    include:
+    - azure_infra/*
+  branches:
+    include:
+    - master

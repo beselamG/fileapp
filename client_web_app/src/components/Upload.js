@@ -104,7 +104,7 @@ export default function Upload({ localAccountId }) {
 
   //Handle submit and post file to /upload API
   async function handleFileSubmit(event) {
-    event.preventDefault(); 
+    event.preventDefault();
     setUploaded(false);
     //Check if file exist in that container
     const exists = fileExists();
@@ -157,15 +157,22 @@ export default function Upload({ localAccountId }) {
     event.preventDefault();
     const url = `${apiUrl}/deleteContainer`;
     const body = { containerName: containerDeleteName };
-    axios.post(url, body)
-      .then(response => {
-        console.log(response);
-        setContainerDeleteName('');
-        setRefreshContainer(!refreshContainer);
-        setUploaded(true);
-      }).catch(err => {
-        alert('Container Delete Error' + err.toString());
-      });
+    if (window.confirm(`Do you want to delete this container ${containerName}? All files inside container fill be deleted`)) {
+      axios.post(url, body)
+        .then(response => {
+          console.log(response);
+          setContainerDeleteName('');
+          setRefreshContainer(!refreshContainer);
+          blobUpdate(apiUrl);
+        }).catch(err => {
+          alert('Container Delete Error' + err.toString());
+        });
+
+    } else {
+      // Do nothing if alert window select close!
+      console.log('Not deleted');
+    }
+
   }
 
   const createContainerToggle = () => {

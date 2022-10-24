@@ -50,6 +50,7 @@ export default function DisplayFiles({ uploaded, localAccountId }) {
   }, [uploaded, localAccountId]);
   useEffect(() => {
     setSearchResults(blob);
+    setLoading(false);
   }, [blob]);
 
   // retrieve account roles

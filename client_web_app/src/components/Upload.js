@@ -53,25 +53,6 @@ export default function Upload({ localAccountId }) {
 
   };
 
-  //GET blobs to compare if they exist when uppload
-  useEffect(() => {
-    console.log('effect');
-    blobUpdate;
-    console.log(localAccountId);
-  }, [localAccountId]);
-  //get after page reload
-  useEffect(() => {
-    console.log('effect');
-    blobUpdate;
-    console.log(localAccountId);
-  }, []);
-  useEffect(() => {
-    console.log('effect');
-    blobUpdate;
-    console.log(localAccountId);
-  }, [uploaded]);
-
-
 
   //Get all containers here when signed in and when new container is created
   useEffect(() => {
@@ -146,8 +127,11 @@ export default function Upload({ localAccountId }) {
         console.log(response);
         setContainerName('');
         setRefreshContainer(!refreshContainer);
+      }).then(()=>{
+        alert('Container created: ' + containerName.toString());
       }).catch(err => {
-        alert('Container Create Error' + err.toString());
+        alert('Container Create Error' + err.toString()+
+              '\nCheck that name is atleast 3 chars no special charachters or it exists');
       });
   }
 
@@ -160,10 +144,10 @@ export default function Upload({ localAccountId }) {
     if (window.confirm(`Do you want to delete this container ${containerName}? All files inside container fill be deleted`)) {
       axios.post(url, body)
         .then(response => {
+          blobUpdate(apiUrl);
           console.log(response);
           setContainerDeleteName('');
           setRefreshContainer(!refreshContainer);
-          blobUpdate(apiUrl);
         }).catch(err => {
           alert('Container Delete Error' + err.toString());
         });

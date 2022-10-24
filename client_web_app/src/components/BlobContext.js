@@ -20,16 +20,14 @@ export function BlobProvider({ children }) {
 
   const getBlob = async (apiUrl) => {
     await blobs.getSQL(apiUrl).then((initialBlobs) => {
-      console.log('4 initiaal? ', initialBlobs);
+      console.log('Context get blobs ', initialBlobs);
       setBlob(initialBlobs);
       console.log('UPDATEted', blob);
     });
   };
   const deleteBlob = (newObj) => {
-
-    console.log('4 initiaal? ', initialBlobs);
-    setBlob(initialBlobs);
-    console.log('Deleted', blob);
+    setBlob(newObj);
+    console.log('Deleted', newObj);
 
   };
 

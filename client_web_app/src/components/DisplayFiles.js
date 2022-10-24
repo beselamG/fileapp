@@ -75,11 +75,13 @@ export default function DisplayFiles({ uploaded, localAccountId }) {
           //If succesfully deletes, delete item from UI
           if (response.status == 200) {
             console.log('Deleted');
-            blobUpdate(apiUrl);
+            //IF succesfull delete blob from Context state
+            const deleteObj = blob.filter(p => p.BlobURL !== BlobURL);
+            blobDelete(deleteObj);
           }
-        }).then(()=>{
-          setSearchResults(blob.filter(p => p.BlobURL !== BlobURL));
-          setSearchTerm('');
+        }).then(() => {
+          /*           setSearchResults(blob.filter(p => p.BlobURL !== BlobURL));
+                    setSearchTerm(''); */
         });
     } else {
       // Do nothing if alert window select close!

@@ -66,7 +66,7 @@ function ProfileContent() {
   return (
     <>
       <h5 className="card-title">Welcome {name}</h5>
-      {accessToken ? <p>Your roles are: {instance.getActiveAccount().idTokenClaims.roles.toString()}</p> : <p>No Access token</p>}
+      {accessToken ? <p>Your roles are: {instance.getActiveAccount().idTokenClaims.roles}</p> : <p>No Access token</p>}
       <BlobProvider>
         <Upload localAccountId={localAccountId} />
       </BlobProvider>

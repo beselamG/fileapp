@@ -9,7 +9,7 @@ import { saveAs } from 'file-saver';
 import SearchIcon from '@mui/icons-material/Search';
 import FileDownloadRoundedIcon from '@mui/icons-material/FileDownloadRounded';
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
-import { useBlobs, useBlobsUpdate } from './BlobContext.js';
+import { useBlobs, useBlobsUpdate, useBlobsDelete } from './BlobContext.js';
 
 
 export default function DisplayFiles({ uploaded, localAccountId }) {
@@ -17,6 +17,7 @@ export default function DisplayFiles({ uploaded, localAccountId }) {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const blob = useBlobs();
+  const blobDelete = useBlobsDelete();
   const blobUpdate = useBlobsUpdate();
   const [searchResults, setSearchResults] = useState(blob);
   const [apiUrl] = useContext(AppConfigContext);

@@ -6,15 +6,21 @@ import blobs from './blobs';
 import { hasBlobWrite, hasBlobRead } from './rbac';
 import { AppConfigContext } from '../AppConfigContext';
 import { saveAs } from 'file-saver';
+import SearchIcon from '@mui/icons-material/Search';
+import FileDownloadRoundedIcon from '@mui/icons-material/FileDownloadRounded';
+import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
+import { useBlobs, useBlobsUpdate } from './BlobContext.js';
 
 
 export default function DisplayFiles({ uploaded, localAccountId }) {
   const [container, setContainers] = useState([]);
-  const [blob, setBlob] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [searchResults, setSearchResults] = useState([]);
+  const blob = useBlobs();
+  const blobUpdate = useBlobsUpdate();
+  const [searchResults, setSearchResults] = useState(blob);
   const [apiUrl] = useContext(AppConfigContext);
+
 
 
 
@@ -33,50 +39,33 @@ export default function DisplayFiles({ uploaded, localAccountId }) {
 
   //GET updated data from DB when upload successfull
   //Get after sign in trigger with localAccountId
-  useEffect(() => {
-    console.log('effect');
-    getBlob();
-    console.log(localAccountId);
-  }, [localAccountId]);
   //get after page reload
   useEffect(() => {
     console.log('effect');
-    getBlob();
-    console.log(localAccountId);
+    blobUpdate(apiUrl);
   }, []);
   //get after new file upload
   useEffect(() => {
-    getBlob();
-  }, [uploaded]);
+    blobUpdate(apiUrl);
+  }, [uploaded, localAccountId]);
+  useEffect(() => {
+    setSearchResults(blob);
+    setLoading(false);
+  }, [blob]);
 
   // retrieve account roles
   const { instance } = useMsal();
 
-  const getBlob = async () => {
-    // if has read permission
-    if (hasBlobRead(instance)) {
-      setLoading(true);
-      blobs.getSQL(apiUrl).then(initialBlobs => {
-        console.log(initialBlobs);
-        setBlob(initialBlobs);
-        setSearchResults(initialBlobs);
-        console.log(blob);
-        setLoading(false);
-      });
-      //otherwise no read permission
-    } else {
-      setBlob([]);
-    }
-  };
+
 
 
 
   //DELETE storage based on container and file name 
-  const handleDelete = (event, BlobURL, FileName, ContainerName) => {
+  const handleDelete = async (event, BlobURL, FileName, ContainerName) => {
     //Ask if sure
     if (window.confirm(`Are you sure you want to delete ${FileName}`)) {
       //setBlob(blob.filter(p => p.BlobURL !== BlobURL))
-      axios.post(`${apiUrl}/dbDelele`, {
+      await axios.post(`${apiUrl}/dbDelele`, {
         containerName: ContainerName,
         fileName: FileName
       })
@@ -85,10 +74,11 @@ export default function DisplayFiles({ uploaded, localAccountId }) {
           //If succesfully deletes, delete item from UI
           if (response.status == 200) {
             console.log('Deleted');
-            setSearchResults(blob.filter(p => p.BlobURL !== BlobURL));
-            setBlob(blob.filter(p => p.BlobURL !== BlobURL));
-            setSearchTerm('');
+            blobUpdate(apiUrl);
           }
+        }).then(()=>{
+          setSearchResults(blob.filter(p => p.BlobURL !== BlobURL));
+          setSearchTerm('');
         });
     } else {
       // Do nothing if alert window select close!
@@ -106,12 +96,12 @@ export default function DisplayFiles({ uploaded, localAccountId }) {
   // if has read permission
   if (hasBlobRead(instance)) {
     return (
-      <div className="App" >
-        <h1>Search by file name</h1>
+      <div className="allFiles" >
+        <span> <SearchIcon /> </span>
         <input value={searchTerm}
           onChange={searchChange}
-          className="searchBar" />
-        <h1>Files</h1>
+          className="searchBar"
+          placeholder='Search by file name ' />
         <div className="tableContainer">
           {/* If fetching DB data  */}
           {loading ? (
@@ -124,9 +114,8 @@ export default function DisplayFiles({ uploaded, localAccountId }) {
                   <th>File name</th>
                   <th>Uploaded by Id</th>
                   <th>Download File</th>
-                  <th>delete</th>
+                  <th>Delete</th>
                 </tr>
-                {/* Conditianal render here. If search is not null show matches, or "no matches" */}
                 {searchResults.map(x =>
                   <tr key={Math.random() * 9999}>
                     <td key={Math.random() * 9999}>
@@ -140,12 +129,12 @@ export default function DisplayFiles({ uploaded, localAccountId }) {
                     </td>
                     <td key={Math.random() * 9999}>
                       <button className="downloadBtn" onClick={event => handleDownload(event, x.BlobURL, x.FileName)}>
-                        download
+                        <FileDownloadRoundedIcon />
                       </button>
                     </td>
                     <td key={Math.random() * 9999}>
                       <button className="deleteBtn" onClick={event => handleDelete(event, x.BlobURL, x.FileName, x.ContainerName)}>
-                        delete
+                        <DeleteRoundedIcon />
                       </button>
                     </td>
                   </tr>

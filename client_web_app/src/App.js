@@ -9,11 +9,13 @@ import {
   UnauthenticatedTemplate,
   useMsal,
 } from '@azure/msal-react';
-import {  getMsalConfig, loginRequest } from './authConfig';
+import { getMsalConfig, loginRequest } from './authConfig';
 import { AppConfigContext } from './AppConfigContext';
 import { AppConfigurationClient } from '@azure/app-configuration';
 import { PublicClientApplication } from '@azure/msal-browser';
 import { MsalProvider } from '@azure/msal-react';
+import { BlobProvider } from './components/BlobContext.js';
+
 
 //provide the app configuration client
 const getAppConfigClient = () => {
@@ -64,8 +66,10 @@ function ProfileContent() {
   return (
     <>
       <h5 className="card-title">Welcome {name}</h5>
-      {accessToken ? <p>Access Token Acquired!</p> : <p>No Access token</p>}
-      <Upload localAccountId={localAccountId} />
+      {accessToken ? <p>Your roles are: {instance.getActiveAccount().idTokenClaims.roles.toString()}</p> : <p>No Access token</p>}
+      <BlobProvider>
+        <Upload localAccountId={localAccountId} />
+      </BlobProvider>
     </>
   );
 }
@@ -74,8 +78,8 @@ function App() {
   const [apiUrl, setApiUrl] = useState(null);
   const [redirectUrl, setRedirectApiUrl] = useState(null);
   const msalInstance = new PublicClientApplication(getMsalConfig(redirectUrl));
-  
-  
+
+
 
 
   useEffect(() => {
@@ -97,14 +101,14 @@ function App() {
         if (api_url.value != undefined && redirect_url.value != undefined) {
           setApiUrl(api_url.value);
           setRedirectApiUrl(redirect_url.value);
-  
+
           console.log('valuess', apiUrl, redirectUrl);
         }
       } catch (error) {
         console.log(error);
       }
     }
-    else{
+    else {
       try {
         const client = getAppConfigClient();
         const api_url = await client.getConfigurationSetting({
@@ -116,7 +120,7 @@ function App() {
         if (api_url.value != undefined && redirect_url.value != undefined) {
           setApiUrl(api_url.value);
           setRedirectApiUrl(redirect_url.value);
-  
+
           console.log('valuess', apiUrl, redirectUrl);
         }
       } catch (error) {
@@ -126,12 +130,13 @@ function App() {
 
   };
 
-  if (apiUrl == null ||  redirectUrl == null) {
+  if (apiUrl == null || redirectUrl == null) {
     return <p>Service not available</p>;
   }
 
   return (
     <AppConfigContext.Provider value={[apiUrl, redirectUrl]}>
+
       <MsalProvider instance={msalInstance}>
         <PageLayout>
           <AuthenticatedTemplate>
@@ -142,6 +147,7 @@ function App() {
           </UnauthenticatedTemplate>
         </PageLayout>
       </MsalProvider>
+
     </AppConfigContext.Provider>
   );
 }

@@ -45,8 +45,31 @@ async function dbUpload(containerName, fileName, ownerId, blobUrl, testConfig) {
     pool.close();
   }
 }
+async function dbUpdate(containerName, fileName, ownerId, blobUrl, testConfig) {
+  const prodConfig = await getDbConfig();
+  const config = testConfig || prodConfig;
 
-async function dbDelete(containerName, fileName, testConfig) {
+  const pool = await sql.connect(config);
+  try {
+    await pool
+      .request()
+      .input('ContainerName', sql.NVarChar, containerName)
+      .input('FileName', sql.NVarChar, fileName)
+      .input('OwnerId', sql.NVarChar, ownerId)
+      .input('BlobUrl', sql.NVarChar, blobUrl)
+      .query(
+        'UPDATE Files SET ContainerName=@ContainerName, FileName=@FileName, OwnerId=@OwnerId, BlobUrl=@BlobUrl WHERE FileName = @FileName AND ContainerName = @ContainerName;'
+      );
+    // console.log(request);
+  } catch (err) {
+    // ... error checks
+    throw err;
+  } finally {
+    pool.close();
+  }
+}
+
+async function dbDeleteFile(containerName, fileName, testConfig) {
   const prodConfig = await getDbConfig();
   const config = testConfig || prodConfig;
 
@@ -68,4 +91,25 @@ async function dbDelete(containerName, fileName, testConfig) {
   }
 }
 
-module.exports = { dbTest, dbUpload, dbDelete };
+async function dbDeleteContainer(containerName, testConfig) {
+  const prodConfig = await getDbConfig();
+  const config = testConfig || prodConfig;
+
+  const pool = await sql.connect(config);
+  try {
+    await pool
+      .request()
+      .input('ContainerName', sql.NVarChar, containerName)
+      .query(
+        'DELETE FROM Files WHERE ContainerName = @ContainerName;'
+      );
+  } catch (err) {
+    console.log(err);
+    // ... error checks
+    throw err;
+  } finally {
+    pool.close();
+  }
+}
+
+module.exports = { dbTest, dbUpload, dbDeleteFile, dbDeleteContainer, dbUpdate };

@@ -6,7 +6,7 @@ export const getMsalConfig = (redirectUrl) =>{
   
   const msalConfig = {
     auth: {
-      clientId: '3e08f117-61f9-4a51-93c5-6b3c40c6f205',
+      clientId: '3e08f117-61f9-4a51-93c5-6b3c40c6f205', //aad TENAT id  
       authority:
         'https://login.microsoftonline.com/031e4f4a-6a35-45e0-a98e-107900032d62', // This is a URL (e.g. https://login.microsoftonline.com/{your tenant ID})
       redirectUri: redirectUrl,

@@ -1,0 +1,26 @@
+trigger:
+  paths:
+    include:
+    - azure_infra/*
+  branches:
+    include:
+    - master
+pool:
+  vmImage: windows-latest
+
+jobs:
+  - job: Deploy
+    steps:
+      - task: AzureResourceManagerTemplateDeployment@3
+        displayName: 'deploy bicep file'
+        inputs:
+          deploymentScope: 'Resource Group'
+          azureResourceManagerConnection: 'beselamConnection'
+          subscriptionId: '6b13e739-7ee2-437c-b6f2-7e58e5cfc457'
+          action: 'Create Or Update Resource Group'
+          resourceGroupName: 'rg-beselam-aug-we'
+          location: 'West Europe'
+          templateLocation: 'Linked artifact'
+          csmFile: 'azure_infra/main.bicep'
+          csmParametersFile: 'azure_infra/main.parameters.json'
+          deploymentMode: 'Incremental'

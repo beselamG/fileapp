@@ -17,7 +17,7 @@ param serverName string = uniqueString('sql', resourceGroup().id)
 param sqlDBName string = 'fileMeta'
 
 @description('keyvault name')
-param kv string = 'teamaz-key-vaultDbb'
+param kv string = 'teamaz-key-vaultDbbxd'
 
 @description('sql server endpoint')
 var sqlSrvName = environment().suffixes.sqlServerHostname
@@ -92,7 +92,7 @@ resource appConfigStore 'Microsoft.AppConfiguration/configurationStores@2022-05-
   sku: {
     name: 'standard'
   }
-  name: 'fileUploaderProAppConfigxcvc'
+  name: 'fileUploaderProAppConfigxcvcv'
 }
 
 module storageAccount 'module/storage_standard.bicep' = {
@@ -151,6 +151,7 @@ module appInsight 'module/appInsight.bicep' = {
 }
 
 module function 'module/function.bicep' = {
+  dependsOn:[appServicePlanFunc]
   name: 'fileloaderfun34455'
   params: {
     location: location

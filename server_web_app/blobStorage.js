@@ -94,13 +94,16 @@ const uploadBlob = async function (containerName, blobFile, loacalAccountId, exi
     );
 
     const msg = `Upload block blob ${blobName} successfully`;
-
+    const dateTime = new Date().toISOString().
+      replace(/T/, ' ').      // replace T with a space
+      replace(/\..+/, '')     // delete the dot and everything after
+    console.log(dateTime);
     // write into database
     console.log('EXISTS VALUE', exists);
     if (exists == 'true') {
       console.log("FILE EXISTS");
       console.log('EXISTS');
-      dbUpdate(containerName, blobName, loacalAccountId, blockBlobClient.url)
+      dbUpdate(containerName, blobName, loacalAccountId, blockBlobClient.url, dateTime)
         .then(() => { })
         .catch((err) => {
           console.error(err);
@@ -108,7 +111,7 @@ const uploadBlob = async function (containerName, blobFile, loacalAccountId, exi
         });
     } else {
       console.log('DOES NOT EXIST');
-      dbUpload(containerName, blobName, loacalAccountId, blockBlobClient.url)
+      dbUpload(containerName, blobName, loacalAccountId, blockBlobClient.url, dateTime)
         .then(() => { })
         .catch((err) => {
           console.error(err);

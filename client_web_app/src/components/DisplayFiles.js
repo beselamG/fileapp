@@ -149,26 +149,34 @@ export default function DisplayFiles({ uploaded, localAccountId }) {
                   <th>Container</th>
                   <th>File name</th>
                   <th>Uploaded by Id</th>
+                  <th>Upload Time</th>
+                  <th>Modified Time</th>
                   <th>Download File</th>
                   <th>Delete</th>
                 </tr>
-                {displayFiles.map(x =>
-                  <tr key={Math.random() * 9999}>
-                    <td key={Math.random() * 9999}>
+                {displayFiles.map((x,i)=>
+                  <tr key={i}>
+                    <td key={x.i}>
                       {x.ContainerName}
                     </td>
-                    <td key={Math.random() * 9999}>
+                    <td key={x.i}>
                       {x.FileName}
                     </td>
-                    <td key={Math.random() * 9999}>
+                    <td key={x.i}>
                       {x.OwnerId}
                     </td>
-                    <td key={Math.random() * 9999}>
+                    <td key={x.i}>
+                      {x.UploadTime}
+                    </td>
+                    <td key={x.i}>
+                      {x.UpdateTime}
+                    </td>
+                    <td key={x.i}>
                       <button className="downloadBtn" onClick={event => handleDownload(event, x.ContainerName, x.FileName)}>
                         <FileDownloadRoundedIcon />
                       </button>
                     </td>
-                    <td key={Math.random() * 9999}>
+                    <td key={x.i}>
                       <button className="deleteBtn" onClick={event => handleDelete(event, x.BlobURL, x.FileName, x.ContainerName)}>
                         <DeleteRoundedIcon />
                       </button>

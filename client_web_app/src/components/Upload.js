@@ -91,6 +91,7 @@ export default function Upload({ localAccountId }) {
     const exists = fileExists();
     if (exists) {
       console.log('EXISTS');
+      
       //If it exist you can choose if replace the previous or not upload
       if (window.confirm(`This file name "${file.name}" allready exist in container "${selectedContainer}"
                           \n\tChoose OK to replace the current file.\n\t Press Cancel to not upload`)) {

@@ -57,7 +57,7 @@ app.get("/getFilesByOwnerId/:ownerId", async (req, res) => {
   });
 
   res.send(files);
-}); 
+});
 
 // add test comment
 app.get('/dbTest', async (req, res) => {
@@ -131,6 +131,18 @@ app.post('/dbDelele', async (req, res) => {
     });
 });
 
+app.post('/mockSearch', async (req, res) => {
+  const searchTerm = req.body.searchTerm;
+  console.log('Serach: ',searchTerm);
+  const searchResult = [
+    {ContainerName: 'mock1', FileName: searchTerm, OwnerId: '5aef25b4-7f03-4247-846b-527da65c5c1c', BlobURL: 'https://storcafla426wsqmww1/images.png' },
+    {ContainerName: 'mock2', FileName: searchTerm, OwnerId: '5aef25b4-7f03-4247-846b-527da65c5c1c', BlobURL: 'https://storcafla426wsqmww1/images.png' }
+  ]
+  res.send(searchResult);
+
+
+});
+
 app.get('/getContainer', async (req, res) => {
   const blobs = await getContainerList();
   res.send(blobs);
@@ -145,7 +157,7 @@ app.post('/upload', (req, res) => {
       res.status(400).send('Something went wrong!');
     }
 
-   
+
 
     uploadBlob(req.body.containerName, req.file, req.body.localAccountId, req.body.exists)
       .then((msg) => {

@@ -36,7 +36,7 @@ export default function DisplayFiles({ uploaded, localAccountId }) {
   const postSearch = (event) => {
     console.log(searchTerm);
     event.preventDefault();
-    const url = `${apiUrl}/mockSearch`;
+    const url = `${apiUrl}/dbQueryFileName`;
     const body = { searchTerm: searchTerm };
     axios.post(url, body)
       .then(response => {

@@ -1,18 +1,28 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
-    "contentVersion": "1.0.0.0",
-    "parameters": {
-      "sqlDBName": {
-        "value": "fileMeta"
-      },
-      "administratorLogin": {
-        "value": "adminlogin"
-      },
-      "administratorLoginPassword": {
-        "value": "AwDtNL3QeCM9eztvgjbM"
-      },
-      "appServicePlanSku": {
-        "value": "F1"
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "sqlDBName": {
+      "value": "fileMeta"
+    },
+    "environmentType": {
+      "value": "dev"
+    },
+    "adminPassword": {
+      "reference": {
+        "keyVault": {
+          "id": "/subscriptions/6b13e739-7ee2-437c-b6f2-7e58e5cfc457/resourceGroups/rg-beselam-aug-we/providers/Microsoft.KeyVault/vaults/teamaz-key-vaultDbb"
+        },
+        "secretName": "SQL-PASSWORD"
+      }
+    },
+    "adminUserName": {
+      "reference": {
+        "keyVault": {
+          "id": "/subscriptions/6b13e739-7ee2-437c-b6f2-7e58e5cfc457/resourceGroups/rg-beselam-aug-we/providers/Microsoft.KeyVault/vaults/teamaz-key-vaultDbb"
+        },
+        "secretName": "SQL-USERNAME"
       }
     }
   }
+}

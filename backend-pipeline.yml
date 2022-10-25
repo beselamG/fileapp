@@ -6,6 +6,9 @@ trigger:
   paths:
     include:
     - server_web_app/*
+    exclude:
+    - azure_infra/*
+    - client_web_app/*
   branches:
     include:
     - master

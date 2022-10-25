@@ -2,23 +2,26 @@ import React, { useContext } from 'react';
 import { useState, useEffect } from 'react';
 import { useMsal } from '@azure/msal-react';
 import axios from 'axios';
-import blobs from './blobs';
 import { hasBlobWrite, hasBlobRead } from './rbac';
 import { AppConfigContext } from '../AppConfigContext';
 import { saveAs } from 'file-saver';
 import SearchIcon from '@mui/icons-material/Search';
 import FileDownloadRoundedIcon from '@mui/icons-material/FileDownloadRounded';
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
-import { useBlobs, useBlobsUpdate } from './BlobContext.js';
+import { useBlobs, useBlobsUpdate, useBlobsDelete } from './BlobContext.js';
 
 
 export default function DisplayFiles({ uploaded, localAccountId }) {
-  const [container, setContainers] = useState([]);
+  // retrieve account roles
+  const { instance } = useMsal();
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [displaySearch, setDisplaySearch] = useState(false);
+  const [searchArrayLenght, setSearchArrayLenght] = useState(null);
   const blob = useBlobs();
+  const blobDelete = useBlobsDelete();
   const blobUpdate = useBlobsUpdate();
-  const [searchResults, setSearchResults] = useState(blob);
+  const [displayFiles, setDisplayFiles] = useState(blob);
   const [apiUrl] = useContext(AppConfigContext);
 
 
@@ -29,36 +32,49 @@ export default function DisplayFiles({ uploaded, localAccountId }) {
     setSearchTerm(event.target.value);
   };
 
-  useEffect(() => {
-    const results = blob.filter(b =>
-      b.FileName.toLowerCase().includes(searchTerm)
-    );
-    setSearchResults(results);
-  }, [searchTerm]);
+  //Post API request to /mockSearch with search term
+  const postSearch = (event) => {
+    console.log(searchTerm);
+    event.preventDefault();
+    const url = `${apiUrl}/mockSearch`;
+    const body = { searchTerm: searchTerm };
+    axios.post(url, body)
+      .then(response => {
+        const resultObjArra = response.data;
+        console.log(resultObjArra);
+        setDisplaySearch(true);
+        setSearchArrayLenght(resultObjArra.length);
+        setDisplayFiles(resultObjArra);
+      });
+  };
 
+  const resetSearch = () => {
+    //Show all files, hide search info 
+    setDisplaySearch(false);
+    setSearchTerm('');
+    setDisplayFiles(blob);
+  };
+
+  /*   useEffect(() => {
+      const results = blob.filter(b =>
+        b.FileName.toLowerCase().includes(searchTerm)
+      );
+      setDisplayFiles(results);
+    }, [searchTerm]);
+   */
 
   //GET updated data from DB when upload successfull
   //Get after sign in trigger with localAccountId
-  //get after page reload
-  useEffect(() => {
-    console.log('effect');
-    blobUpdate(apiUrl);
-  }, []);
   //get after new file upload
   useEffect(() => {
     blobUpdate(apiUrl);
+    setDisplaySearch(false);
+    setSearchTerm('');
   }, [uploaded, localAccountId]);
   useEffect(() => {
-    setSearchResults(blob);
+    setDisplayFiles(blob);
     setLoading(false);
   }, [blob]);
-
-  // retrieve account roles
-  const { instance } = useMsal();
-
-
-
-
 
   //DELETE storage based on container and file name 
   const handleDelete = async (event, BlobURL, FileName, ContainerName) => {
@@ -74,11 +90,13 @@ export default function DisplayFiles({ uploaded, localAccountId }) {
           //If succesfully deletes, delete item from UI
           if (response.status == 200) {
             console.log('Deleted');
-            blobUpdate(apiUrl);
+            //IF succesfull delete blob from Context state
+            const deleteObj = blob.filter(p => p.BlobURL !== BlobURL);
+            blobDelete(deleteObj);
           }
         }).then(() => {
-          setSearchResults(blob.filter(p => p.BlobURL !== BlobURL));
-          setSearchTerm('');
+          /*           setSearchResults(blob.filter(p => p.BlobURL !== BlobURL));
+                    setSearchTerm(''); */
         });
     } else {
       // Do nothing if alert window select close!
@@ -104,11 +122,22 @@ export default function DisplayFiles({ uploaded, localAccountId }) {
   if (hasBlobRead(instance)) {
     return (
       <div className="allFiles" >
-        <span> <SearchIcon /> </span>
-        <input value={searchTerm}
-          onChange={searchChange}
-          className="searchBar"
-          placeholder='Search by file name ' />
+        {/* Display search result sum if true. Display search bart if false */}
+
+        {displaySearch ? <div className='searchInfo'>
+          {searchArrayLenght} Search results for &apos; {searchTerm} &apos; 
+          <button onClick={resetSearch}>Reset search</button>
+        </div> :
+          <div>
+            <span> <SearchIcon /> </span>
+            <input value={searchTerm}
+              onChange={searchChange}
+              className="searchBar"
+              placeholder='Search by file name ' />
+            <button onClick={postSearch}>Search</button>
+          </div>
+        }
+
         <div className="tableContainer">
           {/* If fetching DB data  */}
           {loading ? (
@@ -123,7 +152,7 @@ export default function DisplayFiles({ uploaded, localAccountId }) {
                   <th>Download File</th>
                   <th>Delete</th>
                 </tr>
-                {searchResults.map(x =>
+                {displayFiles.map(x =>
                   <tr key={Math.random() * 9999}>
                     <td key={Math.random() * 9999}>
                       {x.ContainerName}

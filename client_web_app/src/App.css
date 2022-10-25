@@ -78,9 +78,11 @@
 
 }
 .searchBar{
-  width: 80%;
+  width: 50%;
   margin-bottom: 5px;
 }
+
+
 .ReactCollapse--collapse {
   transition: height 500ms;
 }

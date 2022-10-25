@@ -3,6 +3,7 @@ import blobs from './blobs';
 
 const BlobContext = React.createContext();
 const BlobUpdateContext = React.createContext();
+const BlobDeleteContext = React.createContext();
 
 export function useBlobs() {
   return useContext(BlobContext);
@@ -10,22 +11,36 @@ export function useBlobs() {
 export function useBlobsUpdate() {
   return useContext(BlobUpdateContext);
 }
+export function useBlobsDelete() {
+  return useContext(BlobDeleteContext);
+}
 
 export function BlobProvider({ children }) {
   const [blob, setBlob] = useState([]);
 
   const getBlob = async (apiUrl) => {
     await blobs.getSQL(apiUrl).then((initialBlobs) => {
-      console.log('4 initiaal? ',initialBlobs);
+      console.log('Context get blobs ', initialBlobs);
       setBlob(initialBlobs);
-      console.log('UPDATEted',  blob);
+      console.log('UPDATEted', blob);
     });
   };
+  const deleteBlob = (newObj) => {
+    setBlob(newObj);
+    console.log('Deleted', newObj);
+
+  };
+
 
   return (
     <BlobContext.Provider value={blob}>
       <BlobUpdateContext.Provider value={getBlob}>
-        {children}
+        <BlobDeleteContext.Provider value={deleteBlob}>
+
+
+          {children}
+
+        </BlobDeleteContext.Provider>
       </BlobUpdateContext.Provider>
     </BlobContext.Provider>
   );

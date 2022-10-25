@@ -53,7 +53,7 @@ var environmentConfigurationMap = {
         capacity: 1
       }
     }
-     storageAccount: {
+    storageAccount: {
       sku: {
         name: 'Standard_LRS'
         tier: 'Standard'
@@ -99,8 +99,8 @@ module storageAccount 'module/storage_standard.bicep' = {
   name: 'fileUploaderstorage'
   params: {
     location: location
-    sku:environmentConfigurationMap[environmentType].storageAccount.sku
-    
+    sku: environmentConfigurationMap[environmentType].storageAccount.sku
+
   }
 }
 
@@ -151,7 +151,7 @@ module appInsight 'module/appInsight.bicep' = {
 }
 
 module function 'module/function.bicep' = {
-  dependsOn:[appServicePlanFunc]
+  dependsOn: [ appServicePlanFunc ]
   name: 'fileloaderfun34455'
   params: {
     location: location
@@ -165,7 +165,7 @@ module webAppServicePlan 'module/appServicePlan.bicep' = {
   name: 'appServicePlan'
   params: {
     location: location
-    sku:environmentConfigurationMap[environmentType].appServicePlan.sku
+    sku: environmentConfigurationMap[environmentType].appServicePlan.sku
 
   }
 }

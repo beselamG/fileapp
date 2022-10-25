@@ -17,7 +17,7 @@ param serverName string = uniqueString('sql', resourceGroup().id)
 param sqlDBName string = 'fileMeta'
 
 @description('keyvault name')
-param kv string = 'teamaz-key-vaultDbbxd'
+param kv string = 'teamaz-key-vaultx'
 
 @description('sql server endpoint')
 var sqlSrvName = environment().suffixes.sqlServerHostname

@@ -1,5 +1,15 @@
-trigger: none 
-
+trigger:
+  paths:
+    include:
+    - azure_infra/module/*
+    - azure_infra/main.bicep
+    - azure_infra/main.parameters.json
+    exclude:
+    - azure_infra/keyvault/*
+   
+  branches:
+    include:
+    - master
 pool:
   vmImage: windows-latest
 

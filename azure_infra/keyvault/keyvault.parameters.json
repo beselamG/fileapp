@@ -1,0 +1,29 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "serverUserName": {
+      "value": "adminlogin"
+    },
+    "serverPassword": {
+      "value": "AwDtNL3QeCM9eztvgjbM"
+    },
+    "name": {
+      "value": "teamaz-key-vaultDbb"
+    },
+    "tenantId": {
+      "value": "031e4f4a-6a35-45e0-a98e-107900032d62"
+    },
+    "objectIdB": {
+      "value": "e34c72ac-34c6-4650-92df-c7b33171e903"
+    },
+    "objectIdT": {
+      "value": "5aef25b4-7f03-4247-846b-527da65c5c1c"
+    },
+    "objectIdX": {
+      "value": "1b216e95-a3de-4e04-aafe-8626cdc04e82"
+    }
+  }
+}
+
+

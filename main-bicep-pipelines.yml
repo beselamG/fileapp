@@ -7,6 +7,8 @@ trigger:
   branches:
     include:
     - feature/bicep
+    exclude:
+      - master
 pool:
   vmImage: windows-latest
 

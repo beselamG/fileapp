@@ -1,0 +1,38 @@
+# Node.js
+# Build a general Node.js project with npm.
+# Add steps that analyze code, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
+
+trigger:
+  paths:
+    include:
+    - azure_infra/keyvault/*
+    exclude:
+    - azure_infra/module/*
+    - azure_infra/main.bicep
+    - azure_infra/main.parameters.json
+  branches:
+    include:
+    - master
+
+pool:
+  vmImage: ubuntu-latest
+
+jobs:
+  - job: Deploy
+    steps:
+      - task: AzureResourceManagerTemplateDeployment@3
+        displayName: 'Deploy main bicep file'
+        inputs:
+          deploymentScope: 'Resource Group'
+          azureResourceManagerConnection: 'beselamConnection'
+          subscriptionId: '6b13e739-7ee2-437c-b6f2-7e58e5cfc457'
+          action: 'Create Or Update Resource Group'
+          resourceGroupName: 'rg-beselam-aug-we'
+          location: 'West Europe'
+          templateLocation: 'Linked artifact'
+          csmFile: 'azure_infra/keyvault/keyvault.bicep'
+          csmParametersFile: 'azure_infra/keyvault/keyvault.parameters.json'
+          deploymentMode: 'Incremental'
+      
+      

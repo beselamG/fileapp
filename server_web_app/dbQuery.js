@@ -22,6 +22,27 @@ async function dbTest(testConfig) {
   }
 }
 
+async function dbQueryFileName(queryFileName, testConfig) {
+  const prodConfig = await getDbConfig();
+  const config = testConfig || prodConfig;
+  const pool = await sql.connect(config);
+  try {
+    let result = await pool
+      .request()
+      .input('FileName', sql.NVarChar, `%${queryFileName}%`)
+      .query('SELECT * FROM Files WHERE FileName LIKE @FileName;');
+
+    console.log(result);
+    
+    return result.recordset;
+  } catch (err) {
+    // ... error checks
+    throw err;
+  } finally {
+    pool.close();
+  }
+}
+
 async function dbUpload(containerName, fileName, ownerId, blobUrl, dateTime, testConfig) {
   const prodConfig = await getDbConfig();
   const config = testConfig || prodConfig;
@@ -116,4 +137,4 @@ async function dbDeleteContainer(containerName, testConfig) {
   }
 }
 
-module.exports = { dbTest, dbUpload, dbDeleteFile, dbDeleteContainer, dbUpdate };
+module.exports = { dbTest, dbUpload, dbDeleteFile, dbDeleteContainer, dbUpdate, dbQueryFileName };

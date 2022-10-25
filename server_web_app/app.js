@@ -12,7 +12,7 @@ const {
   createContainer,
   deleteContainer
 } = require('./blobStorage.js');
-const { dbTest, dbUpload } = require('./dbQuery.js');
+const { dbTest, dbUpload, dbQueryFileName } = require('./dbQuery.js');
 
 const credentials = new az_identity.DefaultAzureCredential();
 const client = new az_keyvault.SecretClient(
@@ -61,6 +61,18 @@ app.get("/getFilesByOwnerId/:ownerId", async (req, res) => {
 // add test comment
 app.get('/dbTest', async (req, res) => {
   dbTest()
+    .then((results) => {
+      res.send(results);
+    })
+    .catch((err) => {
+      console.error(err);
+    });
+});
+
+app.post('/dbQueryFileName', async (req, res) => {
+  const searchTerm = req.body.searchTerm;
+
+  dbQueryFileName(searchTerm)
     .then((results) => {
       res.send(results);
     })
@@ -128,18 +140,6 @@ app.post('/dbDelele', async (req, res) => {
       console.error(err);
       res.status(400).send('Something went wrong!');
     });
-});
-
-app.post('/mockSearch', async (req, res) => {
-  const searchTerm = req.body.searchTerm;
-  console.log('Serach: ',searchTerm);
-  const searchResult = [
-    {ContainerName: 'mock1', FileName: searchTerm, OwnerId: '5aef25b4-7f03-4247-846b-527da65c5c1c', BlobURL: 'https://storcafla426wsqmww1/images.png' },
-    {ContainerName: 'mock2', FileName: searchTerm, OwnerId: '5aef25b4-7f03-4247-846b-527da65c5c1c', BlobURL: 'https://storcafla426wsqmww1/images.png' }
-  ]
-  res.send(searchResult);
-
-
 });
 
 app.get('/getContainer', async (req, res) => {

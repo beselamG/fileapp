@@ -92,7 +92,7 @@ resource appConfigStore 'Microsoft.AppConfiguration/configurationStores@2022-05-
   sku: {
     name: 'standard'
   }
-  name: 'fileUploaderProAppConfigxcvcv'
+  name: 'fileUploaderProAppConfigzx'
 }
 
 module storageAccount 'module/storage_standard.bicep' = {

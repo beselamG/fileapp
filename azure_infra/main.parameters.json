@@ -5,6 +5,9 @@
     "sqlDBName": {
       "value": "fileMeta"
     },
+    "environmentType": {
+      "value": "dev"
+    },
     "adminPassword": {
       "reference": {
         "keyVault": {

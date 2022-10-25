@@ -25,16 +25,59 @@ var sqlSrvName = environment().suffixes.sqlServerHostname
 @description('sql server full url')
 var sqlServerUrl = '${serverName}${sqlSrvName}'
 
-param  appConfigKeyValue array = [
-  { key:'REACT_APP_API_URL'
-value:'https://file-loader-back.azurewebsites.net' }
-{ key:'REACT_APP_API_URL_DEV'
-value:'http://localhost:3001' }
-{ key:'REACT_APP_REDERICT_URI'
-value:'https://fileloaderapp.azurewebsites.net' }
-{ key:'REACT_APP_REDERICT_URI_DEV'
-value:'http://localhost:3000' } 
+@description('The type of environment. This must be nonprod or prod.')
+@allowed([
+  'dev'
+  'prod'
+])
+param environmentType string
+
+@description('list of keys value pairs to be stored in the app config')
+param appConfigKeyValue array = [
+  { key: 'REACT_APP_API_URL'
+    value: 'https://file-loader-back.azurewebsites.net' }
+  { key: 'REACT_APP_API_URL_DEV'
+    value: 'http://localhost:3001' }
+  { key: 'REACT_APP_REDERICT_URI'
+    value: 'https://fileloaderapp.azurewebsites.net' }
+  { key: 'REACT_APP_REDERICT_URI_DEV'
+    value: 'http://localhost:3000' }
 ]
+
+@description('Define the SKUs for each component based on the environment type.')
+var environmentConfigurationMap = {
+  dev: {
+    appServicePlan: {
+      sku: {
+        name: 'F1'
+        capacity: 1
+      }
+    }
+     storageAccount: {
+      sku: {
+        name: 'Standard_LRS'
+        tier: 'Standard'
+      }
+    }
+  }
+  prod: {
+    appServicePlan: {
+      sku: {
+        name: 'P1v2'
+        tier: 'PremiumV2'
+        size: 'P1v2'
+        family: 'Pv2'
+        capacity: 1
+      }
+    }
+    storageAccount: {
+      sku: {
+        name: 'Standard_ZRS'
+        tier: 'Standard'
+      }
+    }
+  }
+}
 
 resource appConfigStore 'Microsoft.AppConfiguration/configurationStores@2022-05-01' = {
   location: location
@@ -56,6 +99,8 @@ module storageAccount 'module/storage_standard.bicep' = {
   name: 'fileUploaderstorage'
   params: {
     location: location
+    sku:environmentConfigurationMap[environmentType].storageAccount.sku
+    
   }
 }
 
@@ -119,6 +164,7 @@ module webAppServicePlan 'module/appServicePlan.bicep' = {
   name: 'appServicePlan'
   params: {
     location: location
+    sku:environmentConfigurationMap[environmentType].appServicePlan.sku
 
   }
 }
@@ -168,4 +214,3 @@ resource configurationStoreValue 'Microsoft.AppConfiguration/configurationStores
     value: keyValue.value
   }
 }]
-

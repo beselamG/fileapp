@@ -7,6 +7,7 @@ const az_keyvault = require('@azure/keyvault-secrets');
 const {
   getContainerList,
   uploadBlob,
+  downloadBlob,
   deleteBlob,
   createContainer,
   deleteContainer
@@ -25,8 +26,6 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
-
-
 
 app.get("/getFilesByOwnerId/:ownerId", async (req, res) => {
 
@@ -170,6 +169,13 @@ app.post('/upload', (req, res) => {
       });
   });
 });
+
+// download blob and send it back as stream
+app.post('/download', (req, res) => {
+  const containerName = req.body.containerName;
+  const fileName = req.body.fileName;
+  downloadBlob(containerName, fileName, res);
+})
 
 app.get('/key', (req, res) => {
   client

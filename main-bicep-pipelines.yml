@@ -6,9 +6,7 @@ trigger:
     - azure_infra/keyvault/*
   branches:
     include:
-    - feature/bicep
-    exclude:
-      - master
+    - master
 pool:
   vmImage: windows-latest
 

@@ -1,0 +1,14 @@
+trigger:
+  paths:
+    include:
+    - azure_infra/*
+    exclude:
+    - azure_infra/keyvault/*
+  branches:
+    include:
+    - feature/bicep
+pool:
+  vmImage: windows-latest
+
+jobs:
+  - job: Deploy

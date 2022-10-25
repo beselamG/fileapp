@@ -27,8 +27,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 
-
-
 app.get("/getFilesByOwnerId/:ownerId", async (req, res) => {
 
   const files = [];
@@ -58,7 +56,7 @@ app.get("/getFilesByOwnerId/:ownerId", async (req, res) => {
   });
 
   res.send(files);
-}); 
+});
 
 // add test comment
 app.get('/dbTest', async (req, res) => {
@@ -146,7 +144,7 @@ app.post('/upload', (req, res) => {
       res.status(400).send('Something went wrong!');
     }
 
-   
+
 
     uploadBlob(req.body.containerName, req.file, req.body.localAccountId, req.body.exists)
       .then((msg) => {
@@ -161,10 +159,10 @@ app.post('/upload', (req, res) => {
 });
 
 // download blob and send it back as stream
-app.get('/download', (req, res) => {
+app.post('/download', (req, res) => {
   const containerName = req.body.containerName;
-  const blobName = req.body.blobName;
-  downloadBlob(containerName, blobName, res);
+  const fileName = req.body.fileName;
+  downloadBlob(containerName, fileName, res);
 })
 
 app.get('/key', (req, res) => {

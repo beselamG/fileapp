@@ -123,16 +123,17 @@ const uploadBlob = async function (containerName, blobFile, loacalAccountId, exi
   }
 };
 
-const downloadBlob = async function (containerName, blobName, res) {
+const downloadBlob = async function (containerName, fileName, res) {
   try {
     const blobService = await getBlobService();
     const containerClient = blobService.getContainerClient(containerName);    
-    const blobClient = await containerClient.getBlobClient(blobName);
+    const blobClient = await containerClient.getBlobClient(fileName);
     const downloadResponse = await blobClient.download();
     downloadResponse.readableStreamBody.pipe(res);
-
+    
   } catch (err) {
-    throw err;
+    console.error(err);
+    res.status(400).send('Something went wrong!');
   }
 }
 

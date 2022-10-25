@@ -76,7 +76,7 @@ export default function DisplayFiles({ uploaded, localAccountId }) {
             console.log('Deleted');
             blobUpdate(apiUrl);
           }
-        }).then(()=>{
+        }).then(() => {
           setSearchResults(blob.filter(p => p.BlobURL !== BlobURL));
           setSearchTerm('');
         });
@@ -86,11 +86,18 @@ export default function DisplayFiles({ uploaded, localAccountId }) {
     }
   };
   //Download file
-  const handleDownload = (event, BlobURL, FileName) => {
-    saveAs(
-      BlobURL,
-      FileName
-    );
+  const handleDownload = async (event, containerName, fileName) => {
+    axios({
+      url: `${apiUrl}/download`,
+      method: 'POST',
+      data: {
+        containerName: containerName,
+        fileName: fileName
+      },
+      responseType: 'blob', // important
+    }).then((response) => {
+      saveAs(response.data, fileName);
+    });
   };
 
   // if has read permission
@@ -128,7 +135,7 @@ export default function DisplayFiles({ uploaded, localAccountId }) {
                       {x.OwnerId}
                     </td>
                     <td key={Math.random() * 9999}>
-                      <button className="downloadBtn" onClick={event => handleDownload(event, x.BlobURL, x.FileName)}>
+                      <button className="downloadBtn" onClick={event => handleDownload(event, x.ContainerName, x.FileName)}>
                         <FileDownloadRoundedIcon />
                       </button>
                     </td>

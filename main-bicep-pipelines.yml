@@ -1,12 +1,5 @@
-trigger:
-  paths:
-    include:
-    - azure_infra/*
-    exclude:
-    - azure_infra/keyvault/*
-  branches:
-    include:
-    - master
+trigger: none 
+
 pool:
   vmImage: windows-latest
 

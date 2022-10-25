@@ -22,9 +22,10 @@ async function dbTest(testConfig) {
   }
 }
 
-async function dbUpload(containerName, fileName, ownerId, blobUrl, testConfig) {
+async function dbUpload(containerName, fileName, ownerId, blobUrl, dateTime, testConfig) {
   const prodConfig = await getDbConfig();
   const config = testConfig || prodConfig;
+  const updateTime = "N/A"
 
   const pool = await sql.connect(config);
   try {
@@ -34,8 +35,10 @@ async function dbUpload(containerName, fileName, ownerId, blobUrl, testConfig) {
       .input('FileName', sql.NVarChar, fileName)
       .input('OwnerId', sql.NVarChar, ownerId)
       .input('BlobUrl', sql.NVarChar, blobUrl)
+      .input('UploadTime', sql.NVarChar, dateTime)
+      .input('UpdateTime', sql.NVarChar, updateTime)
       .query(
-        'INSERT INTO Files (ContainerName, FileName, OwnerId, BlobUrl) VALUES (@ContainerName, @FileName, @OwnerId, @BlobUrl);'
+        'INSERT INTO Files (ContainerName, FileName, OwnerId, BlobUrl, UploadTime, UpdateTime) VALUES (@ContainerName, @FileName, @OwnerId, @BlobUrl, @UploadTime, @UpdateTime);'
       );
     // console.log(request);
   } catch (err) {
@@ -45,7 +48,7 @@ async function dbUpload(containerName, fileName, ownerId, blobUrl, testConfig) {
     pool.close();
   }
 }
-async function dbUpdate(containerName, fileName, ownerId, blobUrl, testConfig) {
+async function dbUpdate(containerName, fileName, ownerId, blobUrl, dateTime, testConfig) {
   const prodConfig = await getDbConfig();
   const config = testConfig || prodConfig;
 
@@ -57,8 +60,9 @@ async function dbUpdate(containerName, fileName, ownerId, blobUrl, testConfig) {
       .input('FileName', sql.NVarChar, fileName)
       .input('OwnerId', sql.NVarChar, ownerId)
       .input('BlobUrl', sql.NVarChar, blobUrl)
+      .input('UpdateTime', sql.NVarChar, dateTime)
       .query(
-        'UPDATE Files SET ContainerName=@ContainerName, FileName=@FileName, OwnerId=@OwnerId, BlobUrl=@BlobUrl WHERE FileName = @FileName AND ContainerName = @ContainerName;'
+        'UPDATE Files SET ContainerName=@ContainerName, FileName=@FileName, OwnerId=@OwnerId, BlobUrl=@BlobUrl, UpdateTime=@UpdateTime WHERE FileName = @FileName AND ContainerName = @ContainerName;'
       );
     // console.log(request);
   } catch (err) {

@@ -1,15 +1,20 @@
-# Node.js with React
-# Build a Node.js project that uses React.
-# Add steps that analyze code, save build artifacts, deploy, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
 trigger:
   paths:
     include:
-    - server_web_app/*
+    - client_web_app/*
+  branches:
+    include:
+    - production
+    exclude:
+    - master
+
 variables:
-  path: 'server_web_app'
+  path: 'client_web_app'
+  buildPath: 'client_web_app/build'
+
 pool:
   vmImage: windows-latest
+
 steps:
 - task: NodeTool@0
   inputs:
@@ -22,18 +27,22 @@ steps:
   displayName: 'npm install'
 - script: |
     cd $(path)
-    npm run test
+    npm run build
+    popd
     cd ..
-  displayName: 'npm run test'
+  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+  displayName: 'npm run build'
 - task: ArchiveFiles@2
+  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
   inputs:
-    rootFolderOrFile: '$(path)'
+    rootFolderOrFile: '$(buildPath)'
     includeRootFolder: false
     archiveType: 'zip'
     archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
     replaceExistingArchive: true
 - task: PublishBuildArtifacts@1
+  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
   inputs:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-    ArtifactName: 'dropserver'
+    ArtifactName: 'dropProduction'
     publishLocation: 'Container'

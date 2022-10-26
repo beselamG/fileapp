@@ -5,10 +5,18 @@
 trigger:
   paths:
     include:
+    - server_web_app/*
+    exclude:
+    - azure_infra/*
     - client_web_app/*
+  branches:
+    include:
+    - production
+    exclude:
+    - master
 variables:
-  path: 'client_web_app'
-  buildPath: 'client_web_app/build'
+  path: 'server_web_app'
+  zipPath: 'server_web_app/'
 pool:
   vmImage: windows-latest
 steps:
@@ -23,19 +31,19 @@ steps:
   displayName: 'npm install'
 - script: |
     cd $(path)
-    npm run build
-    popd
-    cd ..
-  displayName: 'npm run build'
+    npm run test
+  displayName: 'npm run test'
 - task: ArchiveFiles@2
+  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
   inputs:
-    rootFolderOrFile: '$(buildPath)'
+    rootFolderOrFile: '$(zipPath)'
     includeRootFolder: false
     archiveType: 'zip'
     archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
     replaceExistingArchive: true
 - task: PublishBuildArtifacts@1
+  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
   inputs:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-    ArtifactName: 'drop'
+    ArtifactName: 'dropserverProduction'
     publishLocation: 'Container'

@@ -11,7 +11,7 @@ param adminUserName string
 param adminPassword string
 
 @description('The name of the SQL logical server.')
-param serverName string = 'fileloaderapppro'
+param serverName string = 'fileloaderappSerpro'
 
 @description('The name of the SQL Database.')
 param sqlDBName string = 'fileMeta'
@@ -23,7 +23,7 @@ param kv string = 'teamaz-key-vaultx'
 param frontEndAppName string = 'fileloaderappPro'
 
 @description('back end web app name  name')
-param backEndAppName string = 'file-loader-back'
+param backEndAppName string = 'file-loader-backPro'
 
 @description('function app name')
 param functionAppName string = 'blobdownloaderPro'

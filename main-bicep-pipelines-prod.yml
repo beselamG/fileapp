@@ -9,15 +9,17 @@ trigger:
    
   branches:
     include:
+    - production
+    exclude:
     - master
 
 variables:
-  serverName: 'fileloaderappserdev'
-  kv: 'teamaz-key-vaultDev'
-  frontEndAppName: 'fileloaderappDev'
-  backEndAppName: 'file-loader-backDev'
-  functionAppName: 'blobdownloaderDev'
-  appConfigName: 'fileUploaderProAppConfigDev'
+  serverName: 'fileloaderappserpro'
+  kv: 'teamaz-key-vaultPro'
+  frontEndAppName: 'fileloaderappPro'
+  backEndAppName: 'file-loader-backPro'
+  functionAppName: 'blobdownloaderPro'
+  appConfigName: 'fileUploaderProAppConfigPro'
 
 pool:
   vmImage: windows-latest
@@ -29,13 +31,13 @@ jobs:
         displayName: 'Deploy main bicep file'
         inputs:
           deploymentScope: 'Resource Group'
-          azureResourceManagerConnection: 'beselamConnection'
+          azureResourceManagerConnection: 'productionConnection'
           subscriptionId: '6b13e739-7ee2-437c-b6f2-7e58e5cfc457'
           action: 'Create Or Update Resource Group'
-          resourceGroupName: 'rg-beselam-aug-we'
+          resourceGroupName: 'rg-team-1-aug-prod-we'
           location: 'West Europe'
           templateLocation: 'Linked artifact'
           csmFile: 'azure_infra/main.bicep'
-          overrideParameters: '-serverName $(serverName) -kv $(kv) -frontEndAppName $(frontEndAppName) -backEndAppName $(backEndAppName) -functionAppName $(functionAppName) -appConfigName $(appConfigName)'
           csmParametersFile: 'azure_infra/main.parameters.json'
+          overrideParameters: '-serverName $(serverName) -kv $(kv) -frontEndAppName $(frontEndAppName) -backEndAppName $(backEndAppName) -functionAppName $(functionAppName) -appConfigName $(appConfigName)'
           deploymentMode: 'Incremental'

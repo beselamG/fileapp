@@ -14,6 +14,8 @@ trigger:
   branches:
     include:
     - master
+variables:
+  name: 'teamaz-key-vaultDev'
 
 pool:
   vmImage: ubuntu-latest
@@ -32,6 +34,7 @@ jobs:
           location: 'West Europe'
           templateLocation: 'Linked artifact'
           csmFile: 'azure_infra/keyvault/keyvault.bicep'
+          overrideParameters: '-name $(name)'
           csmParametersFile: 'azure_infra/keyvault/keyvault.parameters.json'
           deploymentMode: 'Incremental'
       

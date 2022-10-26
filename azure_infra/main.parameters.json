@@ -5,9 +5,6 @@
     "sqlDBName": {
       "value": "fileMeta"
     },
-    "environmentType": {
-      "value": "dev"
-    },
     "adminUserName": {
       "value": "adminlogin"
     },

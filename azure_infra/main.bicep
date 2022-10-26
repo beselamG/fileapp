@@ -11,7 +11,7 @@ param adminUserName string
 param adminPassword string
 
 @description('The name of the SQL logical server.')
-param serverName string = uniqueString('sql', resourceGroup().id)
+param serverName string = 'fileloaderapppro'
 
 @description('The name of the SQL Database.')
 param sqlDBName string = 'fileMeta'
@@ -19,18 +19,24 @@ param sqlDBName string = 'fileMeta'
 @description('keyvault name')
 param kv string = 'teamaz-key-vaultx'
 
+@description('front end web app name  name')
+param frontEndAppName string = 'fileloaderappPro'
+
+@description('back end web app name  name')
+param backEndAppName string = 'file-loader-back'
+
+@description('function app name')
+param functionAppName string = 'blobdownloaderPro'
+
+@description('app config name')
+param appConfigName string = 'fileUploaderProAppConfigPro'
+
 @description('sql server endpoint')
 var sqlSrvName = environment().suffixes.sqlServerHostname
 
 @description('sql server full url')
 var sqlServerUrl = '${serverName}${sqlSrvName}'
 
-@description('The type of environment. This must be nonprod or prod.')
-@allowed([
-  'dev'
-  'prod'
-])
-param environmentType string
 
 @description('list of keys value pairs to be stored in the app config')
 param appConfigKeyValue array = [
@@ -43,41 +49,6 @@ param appConfigKeyValue array = [
   { key: 'REACT_APP_REDERICT_URI_DEV'
     value: 'http://localhost:3000' }
 ]
-
-@description('Define the SKUs for each component based on the environment type.')
-var environmentConfigurationMap = {
-  dev: {
-    appServicePlan: {
-      sku: {
-        name: 'F1'
-        capacity: 1
-      }
-    }
-    storageAccount: {
-      sku: {
-        name: 'Standard_LRS'
-        tier: 'Standard'
-      }
-    }
-  }
-  prod: {
-    appServicePlan: {
-      sku: {
-        name: 'P1v2'
-        tier: 'PremiumV2'
-        size: 'P1v2'
-        family: 'Pv2'
-        capacity: 1
-      }
-    }
-    storageAccount: {
-      sku: {
-        name: 'Standard_ZRS'
-        tier: 'Standard'
-      }
-    }
-  }
-}
 
 resource appConfigStore 'Microsoft.AppConfiguration/configurationStores@2022-05-01' = {
   location: location
@@ -92,14 +63,17 @@ resource appConfigStore 'Microsoft.AppConfiguration/configurationStores@2022-05-
   sku: {
     name: 'standard'
   }
-  name: 'fileUploaderProAppConfigzx'
+  name: appConfigName
 }
 
 module storageAccount 'module/storage_standard.bicep' = {
   name: 'fileUploaderstorage'
   params: {
     location: location
-    sku: environmentConfigurationMap[environmentType].storageAccount.sku
+    sku: {
+      name: 'Standard_LRS'
+      tier: 'Standard'
+    }
 
   }
 }
@@ -149,10 +123,22 @@ module appInsight 'module/appInsight.bicep' = {
     location: location
   }
 }
+module appInsightFrontend 'module/appInsight.bicep' = {
+  name: 'appInsightFron'
+  params: {
+    location: location
+  }
+}
+module appInsightBack 'module/appInsight.bicep' = {
+  name: 'appInsightBack'
+  params: {
+    location: location
+  }
+}
 
 module function 'module/function.bicep' = {
   dependsOn: [ appServicePlanFunc ]
-  name: 'fileloaderfun34455'
+  name: functionAppName
   params: {
     location: location
     appInsightKey: appInsight.outputs.instrumentationKey
@@ -165,26 +151,52 @@ module webAppServicePlan 'module/appServicePlan.bicep' = {
   name: 'appServicePlan'
   params: {
     location: location
-    sku: environmentConfigurationMap[environmentType].appServicePlan.sku
+    sku: {
+      name: 'P1v2'
+      tier: 'PremiumV2'
+      size: 'P1v2'
+      family: 'Pv2'
+      capacity: 1
+    }
 
   }
 }
 
 module webAppFront 'module/webAppService.bicep' = {
-  name: 'webappserviceFrontEnd'
+  name: frontEndAppName
   params: {
     appServicePlanId: webAppServicePlan.outputs.apsId
     location: location
     name: frontWebApp
+    appSiteConfig: [
+      {
+        name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
+        value: appInsightFrontend.outputs.instrumentationKey
+      }
+      {
+        name: 'WEBSITE_NODE_DEFAULT_VERSION'
+        value: '~16'
+      }
+    ]
   }
 }
 
 module webAppBack 'module/webAppService.bicep' = {
-  name: 'webappServiceBackend'
+  name: backEndAppName
   params: {
     appServicePlanId: webAppServicePlan.outputs.apsId
     location: location
     name: backendWebApp
+    appSiteConfig: [
+      {
+        name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
+        value: appInsightBack.outputs.instrumentationKey
+      }
+      {
+        name: 'WEBSITE_NODE_DEFAULT_VERSION'
+        value: '~16'
+      }
+    ]
   }
 }
 

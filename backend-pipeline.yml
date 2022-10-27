@@ -82,5 +82,3 @@ stages:
           appType: 'webApp'
           WebAppName: 'file-loader-back'
           packageForLinux: '$(Pipeline.Workspace)/**/*.zip'
-          WebConfigParameters: '-Handler iisnode -NodeStartFile index.js -appType node'
-          AppSettings: '-WEBSITE_NODE_DEFAULT_VERSION ~16'

@@ -24,7 +24,8 @@ stages:
   - stage: build
     displayName: 'Build Artifact'
     jobs:
-    - job: 'init project'
+    - job: 'init'
+      displayName: 'Initialize Project'
       steps:
       - task: NodeTool@0
         inputs:
@@ -42,7 +43,8 @@ stages:
           npm run test
         displayName: 'npm run test'
 
-    - job: 'build artifact'
+    - job: 'build'
+    displayName: 'Build Artifact'
       condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
       steps:
       - task: ArchiveFiles@2
@@ -60,9 +62,10 @@ stages:
           publishLocation: 'pipeline'
 
   - stage: deploy
-    displayName: 'deploy to dev'
+    displayName: 'Deploy to Dev'
     jobs:
-    - job: 'deploy to dev'
+    - job: 'deploy'
+      displayName: 'Deploy to Dev'
       steps:
       - task: DownloadPipelineArtifact@2
         inputs:

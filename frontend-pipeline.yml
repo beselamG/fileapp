@@ -61,3 +61,25 @@ stages:
           targetPath: '$(Build.ArtifactStagingDirectory)'
           artifact: 'drop_client_dev'
           publishLocation: 'pipeline'
+
+  - stage: deploy
+    displayName: 'Deploy to Dev'
+    jobs:
+    - job: 'deploy'
+      displayName: 'Deploy to Dev'
+      steps:
+      - task: DownloadPipelineArtifact@2
+        inputs:
+          buildType: 'current'
+          artifactName: 'drop_client_dev'
+          targetPath: '$(Pipeline.Workspace)'
+
+      - task: AzureRmWebAppDeployment@4
+        displayName: 'Deploy Azure App Service'
+        retryCountOnTaskFailure: 10
+        inputs:
+          ConnectionType: 'AzureRM'
+          azureSubscription: 'aug-dev-connection'
+          appType: 'webApp'
+          WebAppName: 'fileloaderapp'
+          packageForLinux: '$(Pipeline.Workspace)/**/*.zip'

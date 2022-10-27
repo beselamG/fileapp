@@ -12,7 +12,7 @@ const {
   createContainer,
   deleteContainer
 } = require('./blobStorage.js');
-const { dbTest, dbUpload, dbQueryFileName } = require('./dbQuery.js');
+const { dbAll, dbUpload, dbQueryFileName } = require('./dbQuery.js');
 
 const credentials = new az_identity.DefaultAzureCredential();
 const client = new az_keyvault.SecretClient(
@@ -59,8 +59,8 @@ app.get("/getFilesByOwnerId/:ownerId", async (req, res) => {
 });
 
 // add test comment
-app.get('/dbTest', async (req, res) => {
-  dbTest()
+app.get('/dbAll', async (req, res) => {
+  dbAll()
     .then((results) => {
       res.send(results);
     })

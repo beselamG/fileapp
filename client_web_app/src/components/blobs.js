@@ -6,7 +6,7 @@ import axios from 'axios';
 //const baseUrl = '/api/blobs' 
 
 const getSQL = async (apiUrl) => {
-  const request = axios.get(`${apiUrl}/dbTest`);
+  const request = axios.get(`${apiUrl}/dbAll`);
   return request.then(response => {
     console.log(response.data);
     return response.data;

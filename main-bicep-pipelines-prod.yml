@@ -21,6 +21,7 @@ variables:
   functionAppName: 'blobdownloaderPro'
   appConfigName: 'fileUploaderProAppConfigPro'
   appConfigConnSt: 'Endpoint=https://fileuploaderproappconfigpro.azconfig.io;Id=rXuR-l9-s0:Duvl5hBrjv2N3fjaW3JN;Secret=eS+57kmaOsaa0nEEdCneMuTh4EzWLb3gxSr48BgIJVE='
+  enviromentType: 'prod'
 
 pool:
   vmImage: windows-latest
@@ -40,5 +41,5 @@ jobs:
           templateLocation: 'Linked artifact'
           csmFile: 'azure_infra/main.bicep'
           csmParametersFile: 'azure_infra/main.parameters.json'
-          overrideParameters: '-serverName $(serverName) -kv $(kv) -frontEndAppName $(frontEndAppName) -backEndAppName $(backEndAppName) -functionAppName $(functionAppName) -appConfigName $(appConfigName) -appConfigConnSt $(appConfigConnSt)'
+          overrideParameters: '-serverName $(serverName) -kv $(kv) -frontEndAppName $(frontEndAppName) -backEndAppName $(backEndAppName) -functionAppName $(functionAppName) -appConfigName $(appConfigName) -enviromentType $(enviromentType) -appConfigConnSt $(appConfigConnSt)'
           deploymentMode: 'Incremental'

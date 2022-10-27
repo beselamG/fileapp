@@ -44,7 +44,7 @@ stages:
         displayName: 'npm run test'
 
     - job: 'build'
-    displayName: 'Build Artifact'
+      displayName: 'Build Artifact'
       condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
       steps:
       - task: ArchiveFiles@2

@@ -7,7 +7,7 @@ sql.on('error', (err) => {
   throw err;
 });
 
-async function dbTest(testConfig) {
+async function dbAll(testConfig) {
   const prodConfig = await getDbConfig();
   const config = testConfig || prodConfig;
   const pool = await sql.connect(config);
@@ -137,4 +137,4 @@ async function dbDeleteContainer(containerName, testConfig) {
   }
 }
 
-module.exports = { dbTest, dbUpload, dbDeleteFile, dbDeleteContainer, dbUpdate, dbQueryFileName };
+module.exports = { dbAll, dbUpload, dbDeleteFile, dbDeleteContainer, dbUpdate, dbQueryFileName };

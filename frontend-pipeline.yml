@@ -20,7 +20,7 @@ stages:
   - stage: build
     displayName: 'Build Artifact'
     jobs:
-    - job: 'init'
+    - job: 'build'
       displayName: 'Initialize Project'
       condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
       steps:
@@ -42,11 +42,6 @@ stages:
           popd
           cd ..
         displayName: 'npm run build'
-
-    - job: 'build'
-      displayName: 'Build Artifact'
-      condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
-      steps:
 
       - task: ArchiveFiles@2
         inputs:

@@ -19,9 +19,11 @@ import { BlobProvider } from './components/BlobContext.js';
 
 //provide the app configuration client
 const getAppConfigClient = () => {
-  const connection_string = process.env.WAR;
+
+  const connection_string = process.env.AZURE_APP_CONFIG_CONNECTION_STRING || 'Endpoint=https://fileuploaderproappconfig.azconfig.io;Id=IonS-l9-s0:xFGH/OY4WWfwvja+MgZ5;Secret=L5Yp46TMvmWql/zmCZzrAZ3Z/ZGf4KJ5x8T8n2z34jQ=';
+  console.log(connection_string);
   const client = new AppConfigurationClient(
-    'Endpoint=https://fileuploaderproappconfig.azconfig.io;Id=IonS-l9-s0:xFGH/OY4WWfwvja+MgZ5;Secret=L5Yp46TMvmWql/zmCZzrAZ3Z/ZGf4KJ5x8T8n2z34jQ='
+    connection_string
   );
   return client;
 };

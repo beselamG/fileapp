@@ -28,6 +28,9 @@ param backEndAppName string = 'file-loader-backPro'
 @description('function app name')
 param functionAppName string = 'blobdownloaderPro'
 
+@description('app config con string ')
+param appConfigConnSt string = ''
+
 @description('app config name')
 param appConfigName string = 'fileUploaderProAppConfigPro'
 
@@ -177,6 +180,10 @@ module webAppFront 'module/webAppService.bicep' = {
         name: 'WEBSITE_NODE_DEFAULT_VERSION'
         value: '~16'
       }
+      {
+        name: 'AZURE_APP_CONFIG_CONNECTION_STRING' 
+        value: appConfigConnSt
+      }
     ]
   }
 }
@@ -195,6 +202,10 @@ module webAppBack 'module/webAppService.bicep' = {
       {
         name: 'WEBSITE_NODE_DEFAULT_VERSION'
         value: '~16'
+      }
+      {
+       name: 'AZURE_APP_CONFIG_CONNECTION_STRING' 
+       value: appConfigConnSt
       }
     ]
   }

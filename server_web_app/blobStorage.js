@@ -94,7 +94,10 @@ const uploadBlob = async function (containerName, blobFile, loacalAccountId, exi
     );
 
     const msg = `Upload block blob ${blobName} successfully`;
-    const dateTime = new Date().toISOString().
+
+    //Time offset to Finnish time
+    var tzoffset = (new Date()).getTimezoneOffset() * 60000;
+    const dateTime = new Date(Date.now() - tzoffset).toISOString().
       replace(/T/, ' ').      // replace T with a space
       replace(/\..+/, '')     // delete the dot and everything after
     console.log(dateTime);

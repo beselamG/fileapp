@@ -91,7 +91,7 @@ export default function Upload({ localAccountId }) {
     const exists = fileExists();
     if (exists) {
       console.log('EXISTS');
-      
+
       //If it exist you can choose if replace the previous or not upload
       if (window.confirm(`This file name "${file.name}" allready exist in container "${selectedContainer}"
                           \n\tChoose OK to replace the current file.\n\t Press Cancel to not upload`)) {
@@ -128,11 +128,11 @@ export default function Upload({ localAccountId }) {
         console.log(response);
         setContainerName('');
         setRefreshContainer(!refreshContainer);
-      }).then(()=>{
+      }).then(() => {
         alert('Container created: ' + containerName.toString());
       }).catch(err => {
-        alert('Container Create Error' + err.toString()+
-              '\nCheck that name is atleast 3 chars no special charachters or it exists');
+        alert('Container Create Error' + err.toString() +
+          '\nCheck that name is atleast 3 chars no special charachters or it exists');
       });
   }
 
@@ -253,6 +253,7 @@ export default function Upload({ localAccountId }) {
     return (
       <>
         <div className="App" >
+          <h1>You have no permission to create files or containers!</h1>
         </div>
         <DisplayFiles uploaded={uploaded} localAccountId={localAccountId} />
       </>

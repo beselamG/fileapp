@@ -12,69 +12,72 @@ trigger:
   branches:
     include:
     - master
+
 variables:
   path: 'server_web_app'
   zipPath: 'server_web_app/'
+
 pool:
   vmImage: windows-latest
 
-- stage: build
-  displayName: 'Build Artifact'
-  jobs:
-  - job: 'init project'
-    steps:
-    - task: NodeTool@0
-      inputs:
-        versionSpec: '16.x'
-      displayName: 'Install Node.js'
-    
-    - script: |
-        cd $(path)
-        npm install
-        cd ..
-      displayName: 'npm install'
-    
-    - script: |
-        cd $(path)
-        npm run test
-      displayName: 'npm run test'
+stages:
+  - stage: build
+    displayName: 'Build Artifact'
+    jobs:
+    - job: 'init project'
+      steps:
+      - task: NodeTool@0
+        inputs:
+          versionSpec: '16.x'
+        displayName: 'Install Node.js'
+      
+      - script: |
+          cd $(path)
+          npm install
+          cd ..
+        displayName: 'npm install'
+      
+      - script: |
+          cd $(path)
+          npm run test
+        displayName: 'npm run test'
 
-  - job: 'build artifact'
-    condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
-    steps:
-    - task: ArchiveFiles@2
-      inputs:
-        rootFolderOrFile: '$(zipPath)'
-        includeRootFolder: false
-        archiveType: 'zip'
-        archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
-        replaceExistingArchive: true
+    - job: 'build artifact'
+      condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+      steps:
+      - task: ArchiveFiles@2
+        inputs:
+          rootFolderOrFile: '$(zipPath)'
+          includeRootFolder: false
+          archiveType: 'zip'
+          archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+          replaceExistingArchive: true
 
-    - task: PublishPipelineArtifact@1
-      inputs:
-        targetPath: '$(Build.ArtifactStagingDirectory)'
-        artifact: 'drop_server_dev'
-        publishLocation: 'pipeline'
+      - task: PublishPipelineArtifact@1
+        inputs:
+          targetPath: '$(Build.ArtifactStagingDirectory)'
+          artifact: 'drop_server_dev'
+          publishLocation: 'pipeline'
 
-- stage: deploy
-  displayName: 'deploy to dev'
-  jobs:
-  - job: 'deploy to dev'
-    steps:
-    - task: DownloadPipelineArtifact@2
-      inputs:
-        buildType: 'current'
-        artifactName: 'drop_server_dev'
-        targetPath: '$(Pipeline.Workspace)'
+  - stage: deploy
+    displayName: 'deploy to dev'
+    jobs:
+    - job: 'deploy to dev'
+      steps:
+      - task: DownloadPipelineArtifact@2
+        inputs:
+          buildType: 'current'
+          artifactName: 'drop_server_dev'
+          targetPath: '$(Pipeline.Workspace)'
 
-    - task: AzureRmWebAppDeployment@4
-      displayName: 'Deploy Azure App Service'
-      retryCountOnTaskFailure: 10
-      inputs:
-        ConnectionType: 'AzureRM'
-        azureSubscription: 'xuefeng-connect'
-        appType: 'webApp'
-        WebAppName: 'xuefengtest1'
-        packageForLinux: '$(Pipeline.Workspace)/**/*.zip'
-        WebConfigParameters: '-Handler iisnode -NodeStartFile index.js -appType node'
-        AppSettings: '-WEBSITE_NODE_DEFAULT_VERSION ~16'
+      - task: AzureRmWebAppDeployment@4
+        displayName: 'Deploy Azure App Service'
+        retryCountOnTaskFailure: 10
+        inputs:
+          ConnectionType: 'AzureRM'
+          azureSubscription: 'xuefeng-connect'
+          appType: 'webApp'
+          WebAppName: 'xuefengtest1'
+          packageForLinux: '$(Pipeline.Workspace)/**/*.zip'
+          WebConfigParameters: '-Handler iisnode -NodeStartFile index.js -appType node'
+          AppSettings: '-WEBSITE_NODE_DEFAULT_VERSION ~16'

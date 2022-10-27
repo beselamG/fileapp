@@ -18,30 +18,31 @@ variables:
 pool:
   vmImage: windows-latest
 steps:
-- task: NodeTool@0
-  inputs:
-    versionSpec: '16.x'
-  displayName: 'Install Node.js'
-- script: |
-    cd $(path)
-    npm install
-    cd ..
-  displayName: 'npm install'
-- script: |
-    cd $(path)
-    npm run test
-  displayName: 'npm run test'
-- task: ArchiveFiles@2
-  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
-  inputs:
-    rootFolderOrFile: '$(zipPath)'
-    includeRootFolder: false
-    archiveType: 'zip'
-    archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
-    replaceExistingArchive: true
-- task: PublishBuildArtifacts@1
-  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
-  inputs:
-    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-    ArtifactName: 'dropserver2'
-    publishLocation: 'Container'
+  - script: echo '123'
+# - task: NodeTool@0
+#   inputs:
+#     versionSpec: '16.x'
+#   displayName: 'Install Node.js'
+# - script: |
+#     cd $(path)
+#     npm install
+#     cd ..
+#   displayName: 'npm install'
+# - script: |
+#     cd $(path)
+#     npm run test
+#   displayName: 'npm run test'
+# - task: ArchiveFiles@2
+#   condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+#   inputs:
+#     rootFolderOrFile: '$(zipPath)'
+#     includeRootFolder: false
+#     archiveType: 'zip'
+#     archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+#     replaceExistingArchive: true
+# - task: PublishBuildArtifacts@1
+#   condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+#   inputs:
+#     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+#     ArtifactName: 'dropserver2'
+#     publishLocation: 'Container'

@@ -20,6 +20,8 @@ variables:
   backEndAppName: 'file-loader-backPro'
   functionAppName: 'blobdownloaderPro'
   appConfigName: 'fileUploaderProAppConfigPro'
+  appConfigKeyValue: [ { key:'REACT_APP_API_URL', value:'https://fileloaderappbackend.azurewebsites.net' } , { key:'REACT_APP_API_URL_DEV' ,value:'http://localhost:3001' }, { key:'REACT_APP_REDERICT_URI' , value:'https://fileloaderappfrontend.azurewebsites.net' }, { key:'REACT_APP_REDERICT_URI_DEV', value:'http://localhost:3000' } ]
+
 
 pool:
   vmImage: windows-latest
@@ -39,5 +41,5 @@ jobs:
           templateLocation: 'Linked artifact'
           csmFile: 'azure_infra/main.bicep'
           csmParametersFile: 'azure_infra/main.parameters.json'
-          overrideParameters: '-serverName $(serverName) -kv $(kv) -frontEndAppName $(frontEndAppName) -backEndAppName $(backEndAppName) -functionAppName $(functionAppName) -appConfigName $(appConfigName)'
+          overrideParameters: '-serverName $(serverName) -kv $(kv) -frontEndAppName $(frontEndAppName) -backEndAppName $(backEndAppName) -functionAppName $(functionAppName) -appConfigName $(appConfigName) -appConfigKeyValue $(appConfigKeyValue)'
           deploymentMode: 'Incremental'

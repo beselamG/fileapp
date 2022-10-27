@@ -78,7 +78,7 @@ stages:
         retryCountOnTaskFailure: 10
         inputs:
           ConnectionType: 'AzureRM'
-          azureSubscription: 'xuefeng-connect'
+          azureSubscription: 'aug-dev-connection'
           appType: 'webApp'
           WebAppName: 'xuefengtest1'
           packageForLinux: '$(Pipeline.Workspace)/**/*.zip'

@@ -28,6 +28,9 @@ param backEndAppName string = 'file-loader-backPro'
 @description('function app name')
 param functionAppName string = 'blobdownloaderPro'
 
+@description('app config con string ')
+param appConfigConnSt string = ''
+
 @description('app config name')
 param appConfigName string = 'fileUploaderProAppConfigPro'
 
@@ -39,7 +42,7 @@ var sqlServerUrl = '${serverName}${sqlSrvName}'
 
 
 @description('list of keys value pairs to be stored in the app config')
-param appConfigKeyValue array = [
+param appConfigKeyValueDev array = [
   { key: 'REACT_APP_API_URL'
     value: 'https://file-loader-back.azurewebsites.net' }
   { key: 'REACT_APP_API_URL_DEV'
@@ -49,6 +52,28 @@ param appConfigKeyValue array = [
   { key: 'REACT_APP_REDERICT_URI_DEV'
     value: 'http://localhost:3000' }
 ]
+
+@description('list of keys value pairs to be stored in the app config')
+param appConfigKeyValueProd array = [
+  { key: 'REACT_APP_API_URL'
+    value: 'https://fileloaderappbackend.azurewebsites.net' }
+  { key: 'REACT_APP_API_URL_DEV'
+    value: 'http://localhost:3001' }
+  { key: 'REACT_APP_REDERICT_URI'
+    value: 'https://fileloaderappfrontend.azurewebsites.net' }
+  { key: 'REACT_APP_REDERICT_URI_DEV'
+    value: 'http://localhost:3000' }
+]
+
+@description('production app')
+param enviromentType string = 'dev'
+
+param appConfigToBeDEployed object = {
+  prod: appConfigKeyValueProd
+  dev:appConfigKeyValueDev 
+}
+
+
 
 resource appConfigStore 'Microsoft.AppConfiguration/configurationStores@2022-05-01' = {
   location: location
@@ -177,6 +202,10 @@ module webAppFront 'module/webAppService.bicep' = {
         name: 'WEBSITE_NODE_DEFAULT_VERSION'
         value: '~16'
       }
+      {
+        name: 'AZURE_APP_CONFIG_CONNECTION_STRING' 
+        value: appConfigConnSt
+      }
     ]
   }
 }
@@ -195,6 +224,10 @@ module webAppBack 'module/webAppService.bicep' = {
       {
         name: 'WEBSITE_NODE_DEFAULT_VERSION'
         value: '~16'
+      }
+      {
+       name: 'AZURE_APP_CONFIG_CONNECTION_STRING' 
+       value: appConfigConnSt
       }
     ]
   }
@@ -219,7 +252,7 @@ resource sqlServerSecrete 'Microsoft.KeyVault/vaults/secrets@2022-07-01' = {
   }
 }
 
-resource configurationStoreValue 'Microsoft.AppConfiguration/configurationStores/keyValues@2021-10-01-preview' = [for keyValue in appConfigKeyValue: {
+resource configurationStoreValue 'Microsoft.AppConfiguration/configurationStores/keyValues@2021-10-01-preview' = [for keyValue in appConfigToBeDEployed[enviromentType]: {
   name: keyValue.key
   parent: appConfigStore
   properties: {

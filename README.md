@@ -13,14 +13,50 @@ az deployment group create --template-file main.bicep --resource-group $rg_name 
 ```
 
 # server web app
-## .env
-```
-STOR_ACCOUNT="CHANGEME"
-SHARED_KEY="CHANGEME"
-SQL_USERNAME="CHANGEME"
-SQL_PASSWORD="CHANGEME"
-SQL_SERVER="CHANGEME"
-SQL_DATABASE="CHANGEME"
+## deploy
+Azure Web Apps is deployed with bicep IaC.
+
+## apis
+### /dbAll
+query all files in database
+
+### /dbQueryFileName
+query files that matching the pattern
+
+### /dbUpload
+upload file in blob storage and metadata in database
+
+### /createContainer
+create a container
+
+### /deleteContainer
+delete a container
+
+### /dbDelele
+delete file in blob storage and metadata in database
+
+### /getContainer
+get all containers
+
+### /download
+download files from Blob storage
+
+
+# database
+## deploy
+Azure SQL Database is deployed with bicep IaC.
+
+## database scheme
+```SQL
+DROP TABLE IF EXISTS [dbo].[Files]
+CREATE TABLE [dbo].[Files](
+	[ContainerName] [nvarchar](256) NOT NULL,
+	[FileName] [nvarchar](256) NOT NULL,
+	[OwnerId] [nvarchar](128) NOT NULL,
+	[BlobURL] [nvarchar](2048) NOT NULL,
+	[UploadTime] [nvarchar](2048) NOT NULL,
+	[UpdateTime] [nvarchar](2048) NOT NULL,
+) ON [PRIMARY]
 ```
 
 # client web app
@@ -29,37 +65,8 @@ SQL_DATABASE="CHANGEME"
 REACT_APP_API_URL="CHANGEME"
 ```
 
-
 # branches
-
-feel free to check branches
-1. [xuefeng_playground](https://github.com/beselamG/fileapp/tree/xuefeng_playground)
-
-
-# Useful link
-
-1. [blob REST api](https://learn.microsoft.com/en-us/rest/api/storageservices/blob-service-rest-api)
-
-
-2. develop functions using VS Code. The [first](https://learn.microsoft.com/en-us/azure/azure-functions/functions-develop-vs-code?tabs=csharp) one donesn't works for me but the [second](https://github.com/MicrosoftLearning/AZ-204-DevelopingSolutionsforMicrosoftAzure/blob/master/Instructions/Labs/AZ-204_lab_02.md) one works (the same as lab instruction).
-
-3. [create functions using bicep](https://learn.microsoft.com/en-us/azure/azure-functions/functions-create-first-function-bicep?tabs=CLI), but only function plan and function services, no code.
-
-4. [bicep parameter files](https://learn.microsoft.com/en-us/azure/azure-resource-manager/bicep/parameter-files), but one error, no need "@" when passing file path.
-
-    WRONG:
-    ```
-    az deployment group create \
-    --name ExampleDeployment \
-    --resource-group ExampleGroup \
-    --template-file storage.bicep \
-    --parameters @storage.parameters.json
-    ```
-    RIGHT:
-    ```
-    az deployment group create \
-    --name ExampleDeployment \
-    --resource-group ExampleGroup \
-    --template-file storage.bicep \
-    --parameters storage.parameters.json
-    ```
+## master
+working branch for dev environment
+## production
+production branch for prod environment

@@ -56,11 +56,17 @@ stages:
           archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
           replaceExistingArchive: true
 
-      - task: PublishPipelineArtifact@1
+      # - task: PublishPipelineArtifact@1
+      #   inputs:
+      #     targetPath: '$(Build.ArtifactStagingDirectory)'
+      #     artifact: 'drop_server_dev'
+      #     publishLocation: 'pipeline'
+
+      - task: PublishBuildArtifacts@1
         inputs:
-          targetPath: '$(Build.ArtifactStagingDirectory)'
-          artifact: 'drop_server_dev'
-          publishLocation: 'pipeline'
+          PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+          ArtifactName: 'drop_server_dev'
+          publishLocation: 'Container'
 
   - stage: deploy
     displayName: 'Deploy to Dev'

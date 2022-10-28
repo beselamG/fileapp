@@ -73,12 +73,12 @@ stages:
           artifactName: 'drop_server_dev'
           targetPath: '$(Pipeline.Workspace)'
 
-      - task: AzureRmWebAppDeployment@4
-        displayName: 'Deploy Azure App Service'
-        retryCountOnTaskFailure: 10
-        inputs:
-          ConnectionType: 'AzureRM'
-          azureSubscription: 'aug-dev-connection'
-          appType: 'webApp'
-          WebAppName: 'file-loader-back'
-          packageForLinux: '$(Pipeline.Workspace)/**/*.zip'
+      # - task: AzureRmWebAppDeployment@4
+      #   displayName: 'Deploy Azure App Service'
+      #   retryCountOnTaskFailure: 10
+      #   inputs:
+      #     ConnectionType: 'AzureRM'
+      #     azureSubscription: 'aug-dev-connection'
+      #     appType: 'webApp'
+      #     WebAppName: 'file-loader-back'
+      #     packageForLinux: '$(Pipeline.Workspace)/**/*.zip'

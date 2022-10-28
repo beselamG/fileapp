@@ -45,7 +45,7 @@ stages:
 
     - job: 'build'
       displayName: 'Build Artifact'
-      dependson: 'init'
+      dependsOn: 'init'
       condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
       steps:
       - task: ArchiveFiles@2
